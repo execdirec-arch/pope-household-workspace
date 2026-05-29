@@ -3,10 +3,18 @@ function DebtView({ data }) {
   const debt = data.debt || { total: 0, strategy: "Avalanche", cards: [] };
   const cards = debt.cards || [];
   const overLimit = cards.filter(c => c.utilization > 100);
-  const needsApr = cards.filter(c => c.apr === "[TBD]").length;
+  const needsApr = cards.filter(c => c.apr == null).length;
 
-  // Sort by utilization desc for display (will re-sort by APR once APRs are filled in)
-  const sorted = [...cards].sort((a, b) => b.utilization - a.utilization);
+  // Sort by avalanche rank first, then by APR desc, then utilization desc
+  const sorted = [...cards].sort((a, b) => {
+    if (a.avalancheRank != null && b.avalancheRank != null) return a.avalancheRank - b.avalancheRank;
+    if (a.avalancheRank != null) return -1;
+    if (b.avalancheRank != null) return 1;
+    if (a.apr != null && b.apr != null) return b.apr - a.apr;
+    if (a.apr != null) return -1;
+    if (b.apr != null) return 1;
+    return (b.utilization || 0) - (a.utilization || 0);
+  });
 
   return (
     <div>
@@ -82,7 +90,7 @@ function DebtView({ data }) {
       {/* Card breakdown */}
       <div className="section-header">
         <h2 className="section-header__title">All cards</h2>
-        <div className="section-header__meta">sorted by utilization until APRs added</div>
+        <div className="section-header__meta">sorted by avalanche rank · TBD cards at bottom</div>
       </div>
       <div className="card" style={{ padding: 0 }}>
         <table className="table">
@@ -99,24 +107,28 @@ function DebtView({ data }) {
             {sorted.map((c, i) => (
               <tr key={i}>
                 <td><div className="table__name">{c.name}</div></td>
-                <td className="mono">${c.balance.toLocaleString()}</td>
-                <td className="mono">${c.limit.toLocaleString()}</td>
+                <td className="mono">{c.balance != null ? "$" + c.balance.toLocaleString() : "—"}</td>
+                <td className="mono">{c.limit != null ? "$" + c.limit.toLocaleString() : "—"}</td>
                 <td>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ flex: 1, height: 6, background: "var(--paper-deep)", borderRadius: 3, overflow: "hidden", minWidth: 60 }}>
-                      <div style={{
-                        height: "100%",
-                        width: `${Math.min(100, c.utilization)}%`,
-                        background: c.utilization > 100 ? "var(--accent-tomato)" : c.utilization > 85 ? "var(--accent-gold)" : "var(--rehumanize-green)",
-                      }} />
+                  {c.utilization != null ? (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ flex: 1, height: 6, background: "var(--paper-deep)", borderRadius: 3, overflow: "hidden", minWidth: 60 }}>
+                        <div style={{
+                          height: "100%",
+                          width: `${Math.min(100, c.utilization)}%`,
+                          background: c.utilization > 100 ? "var(--accent-tomato)" : c.utilization > 85 ? "var(--accent-gold)" : "var(--rehumanize-green)",
+                        }} />
+                      </div>
+                      <span className={`pill pill--${c.utilization > 100 ? "urgent" : c.utilization > 85 ? "warn" : "current"}`}>
+                        {c.utilization}%
+                      </span>
                     </div>
-                    <span className={`pill pill--${c.utilization > 100 ? 'urgent' : c.utilization > 85 ? 'warn' : 'current'}`}>
-                      {c.utilization}%
-                    </span>
-                  </div>
+                  ) : <span style={{ color: "var(--fg-3)", fontSize: 11 }}>—</span>}
                 </td>
                 <td>
-                  <span className={c.apr === "[TBD]" ? "pill pill--warn" : "mono"}>{c.apr}</span>
+                  {c.apr != null
+                    ? <span className="mono">{c.apr.toFixed(2)}%</span>
+                    : <span className="pill pill--warn">TBD</span>}
                 </td>
               </tr>
             ))}
