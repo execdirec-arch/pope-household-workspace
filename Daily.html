@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Pope Household — Daily Ops</title>
+
+<link rel="stylesheet" href="colors_and_type.css" />
+<link rel="stylesheet" href="workspace/app.css" />
+
+<script src="vendor/react.production.min.js"></script>
+<script src="vendor/react-dom.production.min.js"></script>
+<script src="vendor/babel.min.js"></script>
+
+<script src="workspace/data.js"></script>
+<script src="workspace/vault.js"></script>
+<script type="text/babel" src="workspace/Icons.jsx"></script>
+<script type="text/babel" src="workspace/ErrorBoundary.jsx"></script>
+<script type="text/babel" src="workspace/Shell.jsx"></script>
+<script type="text/babel" src="workspace/TodayView.jsx"></script>
+<script type="text/babel" src="workspace/InboxView.jsx"></script>
+<script type="text/babel" src="workspace/AskView.jsx"></script>
+<script type="text/babel" src="workspace/BillsView.jsx"></script>
+<script type="text/babel" src="workspace/DebtView.jsx"></script>
+<script type="text/babel" src="workspace/ProjectsView.jsx"></script>
+<script type="text/babel" src="workspace/FamilyView.jsx"></script>
+</head>
+
+<body data-density="medium">
+  <div id="root"></div>
+
+  <div id="tweaks" class="tweaks">
+    <div class="tweaks__title">Tweaks</div>
+    <div class="tweaks__row">
+      <div class="tweaks__label">Density</div>
+      <div class="tweaks__options" id="tweak-density">
+        <button class="tweaks__option" data-v="sparse">Sparse</button>
+        <button class="tweaks__option" data-v="medium" aria-pressed="true">Medium</button>
+        <button class="tweaks__option" data-v="dense">Dense</button>
+      </div>
+    </div>
+  </div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect } = React;
+
+function useLocalStorage(key, initial) {
+  const [v, setV] = useState(() => {
+    try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : initial; }
+    catch { return initial; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem(key, JSON.stringify(v)); } catch {}
+  }, [key, v]);
+  return [v, setV];
+}
+
+function App() {
+  const [view, setView] = useLocalStorage("phw.view", "today");
+  const [doneIdsArr, setDoneIdsArr] = useLocalStorage("phw.doneIds", []);
+  const doneIds = new Set(doneIdsArr);
+  const [focus, setFocus] = useLocalStorage("phw.focus", null);
+  const [vaultState, setVaultState] = useState({
+    status: "disconnected",
+    rootName: null, dailyDate: null, daysAgo: null, error: null, pendingHandle: null,
+  });
+  const [data, setData] = useState(window.WORKSPACE_DATA);
+
+  function toggleTodo(id) {
+    const s = new Set(doneIdsArr);
+    if (s.has(id)) s.delete(id); else s.add(id);
+    setDoneIdsArr([...s]);
+  }
+  function onSetFocus(f) { setFocus(f); }
+  function onResumeFocus() { if (focus && focus.view) setView(focus.view); }
+  function onClearFocus() { setFocus(null); }
+
+  async function loadFromVault() {
+    try {
+      const latest = await window.Vault.loadLatestDaily();
+      if (!latest) {
+        setVaultState(s => ({ ...s, status: "connected", rootName: window.Vault.rootName, dailyDate: null, daysAgo: null }));
+        setData(window.WORKSPACE_DATA);
+        return;
+      }
+      const parsed = window.parseGazette(latest.text);
+      const merged = window.mergeVaultIntoData(parsed, window.WORKSPACE_DATA);
+      setData(merged);
+      setVaultState(s => ({ ...s, status: "connected", rootName: window.Vault.rootName, dailyDate: latest.date, daysAgo: latest.daysAgo, error: null }));
+    } catch (e) {
+      console.error(e);
+      setVaultState(s => ({ ...s, status: "error", error: e.message }));
+    }
+  }
+
+  async function connectVault() {
+    try {
+      await window.Vault.connect();
+      await loadFromVault();
+    } catch (e) {
+      if (e.name !== "AbortError") {
+        setVaultState(s => ({ ...s, status: "error", error: e.message }));
+      }
+    }
+  }
+
+  async function reauthorize() {
+    if (!vaultState.pendingHandle) return;
+    const ok = await window.Vault.reauthorize(vaultState.pendingHandle);
+    if (ok) await loadFromVault();
+  }
+
+  async function disconnectVault() {
+    await window.Vault.disconnect();
+    setData(window.WORKSPACE_DATA);
+    setVaultState({ status: "disconnected", rootName: null, dailyDate: null, daysAgo: null, error: null, pendingHandle: null });
+  }
+
+  useEffect(() => {
+    (async () => {
+      if (!window.Vault.supported()) {
+        setVaultState(s => ({ ...s, status: "unsupported" }));
+        return;
+      }
+      const restored = await window.Vault.restore();
+      if (!restored) return;
+      if (restored.needsPermission) {
+        setVaultState(s => ({ ...s, status: "needs-permission", pendingHandle: restored.handle, rootName: restored.handle.name }));
+      } else {
+        await loadFromVault();
+      }
+    })();
+  }, []);
+
+  return (
+    <div className="app">
+      <Nav view={view} setView={setView} data={data} focus={focus} goToFocus={onResumeFocus} />
+      <div className="main">
+        <Topbar data={data} vaultState={vaultState} onConnect={connectVault} onReauthorize={reauthorize} onRefresh={loadFromVault} onDisconnect={disconnectVault} />
+        <FocusStrip focus={focus} onResume={onResumeFocus} onClear={onClearFocus} onSetFocus={onSetFocus} />
+        <div className="view">
+          {view === "today"  && <ErrorBoundary view="Today"><TodayView    data={data} doneIds={doneIds} toggleTodo={toggleTodo} onSetFocus={onSetFocus} /></ErrorBoundary>}
+          {view === "inbox"  && <ErrorBoundary view="Inbox"><InboxView    data={data} /></ErrorBoundary>}
+          {view === "ask"    && <ErrorBoundary view="Ask"><AskView        data={data} /></ErrorBoundary>}
+          {view === "bills"  && <ErrorBoundary view="Bills"><BillsView    data={data} /></ErrorBoundary>}
+          {view === "debt"   && <ErrorBoundary view="Debt"><DebtView      data={data} /></ErrorBoundary>}
+          {view === "wips"   && <ErrorBoundary view="Projects"><ProjectsView data={data} onSetFocus={onSetFocus} /></ErrorBoundary>}
+          {view === "family" && <ErrorBoundary view="Family"><FamilyView  data={data} /></ErrorBoundary>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+/* Density tweaks */
+const tweaksEl = document.getElementById("tweaks");
+const densityRow = document.getElementById("tweak-density");
+function applyDensity(v) {
+  document.body.setAttribute("data-density", v);
+  densityRow.querySelectorAll("button").forEach(b => {
+    b.setAttribute("aria-pressed", b.dataset.v === v ? "true" : "false");
+  });
+}
+const savedDensity = localStorage.getItem("phw.density") || "medium";
+applyDensity(savedDensity);
+densityRow.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-v]");
+  if (!b) return;
+  applyDensity(b.dataset.v);
+  localStorage.setItem("phw.density", b.dataset.v);
+});
+
+/* Keyboard shortcuts: 1-7 jump views */
+window.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+  const map = { "1":"today", "2":"inbox", "3":"ask", "4":"bills", "5":"debt", "6":"wips", "7":"family" };
+  if (map[e.key]) {
+    localStorage.setItem("phw.view", JSON.stringify(map[e.key]));
+    window.location.reload();
+  }
+});
+
+window.addEventListener("message", (e) => {
+  if (!e.data || !e.data.type) return;
+  if (e.data.type === "__activate_edit_mode")   tweaksEl.setAttribute("data-open", "true");
+  if (e.data.type === "__deactivate_edit_mode") tweaksEl.removeAttribute("data-open");
+});
+window.parent.postMessage({ type: "__edit_mode_available" }, "*");
+</script>
+</body>
+</html>

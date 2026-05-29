@@ -1,0 +1,73 @@
+/* =======================================================================
+   Pope Household Workspace — Colors, Type & Foundational Tokens
+   Re-skin of the Rehumanize workspace for household ops.
+   Brand color: warm navy (#2B4C7E). Same variable names for CSS compat.
+   ======================================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Archivo:wght@400;500;600;700;800;900&family=Lora:ital,wght@0,400..700;1,400..700&family=Caveat:wght@500;600&display=swap");
+
+:root {
+  --ink:            #16191D;
+  --ink-soft:       #2A2E33;
+
+  /* Brand: warm navy. Variable still named --rehumanize-green for CSS compat. */
+  --rehumanize-green:      #2B4C7E;
+  --rehumanize-green-deep: #1E3660;
+  --rehumanize-green-dark: #111F3A;
+
+  --paper:          #F8F7F4;
+  --paper-deep:     #EFEDE7;
+  --paper-edge:     #DEDAD1;
+  --white:          #FFFFFF;
+
+  --accent-gold:    #E0A526;
+  --accent-tomato:  #C8493C;
+  --accent-heart:   #E07A5F;
+  --accent-sky:     #6FA8C7;
+  --accent-teal:    #1F8A8C;
+
+  --fg-1:           var(--ink);
+  --fg-2:           #3A3A3D;
+  --fg-3:           #6B6B6E;
+  --fg-inverse:     var(--paper);
+  --fg-link:        var(--rehumanize-green-deep);
+  --fg-link-hover:  var(--ink);
+
+  --bg-page:        var(--paper);
+  --bg-raised:      var(--white);
+  --bg-inverse:     var(--ink);
+  --bg-accent:      var(--rehumanize-green);
+  --border:         var(--paper-edge);
+  --border-strong:  var(--ink);
+
+  --danger:         var(--accent-tomato);
+  --warn:           var(--accent-gold);
+  --info:           var(--accent-sky);
+  --success:        var(--rehumanize-green);
+
+  --font-display:   "Fraunces", Georgia, "Times New Roman", serif;
+  --font-headline:  "Archivo", system-ui, -apple-system, sans-serif;
+  --font-body:      "Archivo", system-ui, -apple-system, sans-serif;
+  --font-editorial: "Lora", Georgia, "Times New Roman", serif;
+  --font-script:    "Caveat", "Brush Script MT", cursive;
+
+  --fs-50:   12px; --fs-75:  14px; --fs-100: 16px; --fs-200: 18px;
+  --fs-300:  20px; --fs-400: 24px; --fs-500: 32px; --fs-600: 40px;
+  --fs-700:  56px; --fs-800: 72px; --fs-900: 96px;
+
+  --lh-tight:  1.05; --lh-snug: 1.2; --lh-normal: 1.45; --lh-loose: 1.65;
+  --tracking-display: -0.01em; --tracking-headline: 0.02em; --tracking-caps: 0.08em;
+
+  --space-1: 4px;  --space-2: 8px;   --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px;  --space-7: 48px; --space-8: 64px;
+
+  --radius-2: 4px; --radius-3: 8px; --radius-pill: 999px;
+  --border-w-1: 1px; --border-w-2: 2px;
+
+  --shadow-soft:  0 2px 6px rgba(15,15,16,0.08);
+  --shadow-paper: 0 10px 30px rgba(15,15,16,0.10);
+
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-snap:     cubic-bezier(0.2, 0.9, 0.3, 1.3);
+  --dur-fast: 120ms; --dur-med: 200ms; --dur-slow: 320ms;
+}
