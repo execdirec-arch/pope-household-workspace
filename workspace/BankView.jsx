@@ -187,7 +187,7 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
                     <tbody>
                       {txns.map(tx => {
                         const amt = Number(tx.amount);
-                        const isCredit = amt < 0;
+                        const isCredit = amt > 0;
                         return (
                           <tr key={tx.id}>
                             <td><div className="table__meta">{fmtDate(tx.date)}</div></td>
