@@ -69,8 +69,8 @@ window.WORKSPACE_DATA = {
     },
     {
       tone: "major",
-      title: "Avalanche order set — two APRs still pending",
-      body: "12 of 14 cards ranked. First Premier (36%) is the immediate target. Disney Chase APR is unknown (intro rate expired) and Amex APR is unconfirmed (over-limit at 143% utilization, likely high). Pull both statements to finalize the order. Until confirmed, continue targeting First Premier first.",
+      title: "Avalanche order set — one card still pending",
+      body: "14 of 15 cards ranked. First Premier (36%) is the immediate target. Citi APR is the only unknown — account access blocked during Discover transfer. Once transfer completes, Discover balance will rise and Citi closes. Amex strategy: pay off (29.90%), then use as the household monthly spend card paid in full.",
     },
     {
       tone: "metric",
@@ -166,30 +166,25 @@ window.WORKSPACE_DATA = {
   },
 
   // Credit card debt — avalanche order (highest APR first). Balances as of May 2026.
-  // Disney Chase APR pending (was 0% intro, now expired — confirm actual rate).
   debt: {
     total: 65159,
     strategy: "Avalanche — highest APR first. Lauren's income → top card each pay period.",
     cards: [
-      // --- CONFIRMED APRs (sorted highest to lowest) ---
-      { name: "First Premier 8513", last4: "8513", limit: 1600,  balance: 1352,  apr: 36.00,   avalancheRank: 1,  note: "First Premier — highest APR, first target" },
-      { name: "First Premier 1308", last4: "1308", limit: 1000,  balance: 1096,  apr: 36.00,   avalancheRank: 2,  note: "First Premier — tied for #1 APR" },
-      { name: "Capital One 4405",   last4: "4405", limit: 3000,  balance: null,  apr: 30.24,   avalancheRank: 3,  note: "Balance TBD — confirm open/closed with Oliver" },
-      { name: "Credit One 1001",    last4: "1001", limit: 1300,  balance: 1120,  apr: 29.65,   avalancheRank: 4,  note: "" },
-      { name: "Credit One 8559",    last4: "8559", limit: 2000,  balance: 1441,  apr: 29.15,   avalancheRank: 5,  note: "" },
-      { name: "Credit One 8853",    last4: "8853", limit: 550,   balance: null,  apr: 29.15,   avalancheRank: 6,  note: "Balance TBD" },
-      { name: "Capital One 0412",   last4: "0412", limit: 3500,  balance: null,  apr: 28.24,   avalancheRank: 7,  note: "Balance TBD — confirm open/closed with Oliver" },
-      { name: "Capital One 3446",   last4: "3446", limit: 2000,  balance: null,  apr: 28.15,   avalancheRank: 8,  note: "Balance TBD — confirm open/closed with Oliver" },
-      { name: "Apple Card",         last4: null,   limit: 2000,  balance: 1963,  apr: 27.24,   avalancheRank: 9,  note: "" },
-      { name: "Credit One 8613",    last4: "8613", limit: 1400,  balance: null,  apr: 25.15,   avalancheRank: 10, note: "Balance TBD" },
-      { name: "Discover",           last4: null,   limit: 12000, balance: 12580, apr: 24.24,   avalancheRank: 11, note: "Large balance — high priority despite lower APR" },
-      { name: "Indigo",             last4: null,   limit: 300,   balance: 0,     apr: 23.90,   avalancheRank: 12, note: "Near zero balance" },
-      // --- APR PENDING ---
-      { name: "Disney Chase",       last4: null,   limit: 10500, balance: 10228, apr: null,    avalancheRank: null, note: "APR pending — was 0% intro (expired). Confirm actual rate." },
-      // --- EXISTING ENTRIES (no APR provided yet) ---
-      { name: "Amex",               last4: null,   limit: 3700,  balance: 5298,  apr: null,    avalancheRank: null, note: "Over limit — likely highest APR. Confirm." },
-      { name: "Citi",               last4: null,   limit: 12500, balance: 12138, apr: null,    avalancheRank: null, note: "$850/mo targeted payment already active" },
-      { name: "Concora/Indigo",     last4: null,   limit: null,  balance: null,  apr: null,    avalancheRank: null, note: "~$239/mo autopay — confirm APR" },
+      { name: "First Premier 8513", last4: "8513", limit: 1600,  balance: 1352,  apr: 36.00, avalancheRank: 1,  note: "First Premier — highest APR, first target" },
+      { name: "First Premier 1308", last4: "1308", limit: 1000,  balance: 1096,  apr: 36.00, avalancheRank: 2,  note: "First Premier — tied for #1 APR" },
+      { name: "Capital One 4405",   last4: "4405", limit: 3000,  balance: null,  apr: 30.24, avalancheRank: 3,  note: "Balance TBD — confirm open/closed with Oliver" },
+      { name: "Amex",               last4: null,   limit: 3700,  balance: 5298,  apr: 29.90, avalancheRank: 4,  note: "Strategy: pay off then use as monthly spend card (pay in full each month)" },
+      { name: "Credit One 1001",    last4: "1001", limit: 1300,  balance: 1120,  apr: 29.65, avalancheRank: 5,  note: "" },
+      { name: "Credit One 8559",    last4: "8559", limit: 2000,  balance: 1441,  apr: 29.15, avalancheRank: 6,  note: "" },
+      { name: "Credit One 8853",    last4: "8853", limit: 550,   balance: null,  apr: 29.15, avalancheRank: 7,  note: "Balance TBD" },
+      { name: "Capital One 0412",   last4: "0412", limit: 3500,  balance: null,  apr: 28.24, avalancheRank: 8,  note: "Balance TBD — confirm open/closed with Oliver" },
+      { name: "Capital One 3446",   last4: "3446", limit: 2000,  balance: null,  apr: 28.15, avalancheRank: 9,  note: "Balance TBD — confirm open/closed with Oliver" },
+      { name: "Apple Card",         last4: null,   limit: 2000,  balance: 1963,  apr: 27.24, avalancheRank: 10, note: "" },
+      { name: "Credit One 8613",    last4: "8613", limit: 1400,  balance: null,  apr: 25.15, avalancheRank: 11, note: "Balance TBD" },
+      { name: "Discover",           last4: null,   limit: 12000, balance: 12580, apr: 24.24, avalancheRank: 12, note: "Citi balance transferring here this month — balance will increase" },
+      { name: "Disney Chase",       last4: null,   limit: 10500, balance: 10228, apr: 17.49, avalancheRank: 13, note: "Lowest confirmed APR — last in payoff order" },
+      { name: "Indigo",             last4: null,   limit: 300,   balance: 0,     apr: 23.90, avalancheRank: null, pif: true, note: "Paid in full every month — not carrying a balance, not an avalanche target" },
+      { name: "Citi",               last4: null,   limit: 12500, balance: 12138, apr: null,  avalancheRank: null, note: "Transferring to Discover this month — no account access currently. $850/mo payment ongoing." },
     ],
   },
 

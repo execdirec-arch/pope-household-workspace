@@ -3,7 +3,7 @@ function DebtView({ data }) {
   const debt = data.debt || { total: 0, strategy: "Avalanche", cards: [] };
   const cards = debt.cards || [];
   const overLimit = cards.filter(c => c.utilization > 100);
-  const needsApr = cards.filter(c => c.apr == null).length;
+  const needsApr = cards.filter(c => c.apr == null && !c.pif).length;
 
   // Sort by avalanche rank first, then by APR desc, then utilization desc
   const sorted = [...cards].sort((a, b) => {
@@ -126,9 +126,11 @@ function DebtView({ data }) {
                   ) : <span style={{ color: "var(--fg-3)", fontSize: 11 }}>—</span>}
                 </td>
                 <td>
-                  {c.apr != null
-                    ? <span className="mono">{c.apr.toFixed(2)}%</span>
-                    : <span className="pill pill--warn">TBD</span>}
+                  {c.pif
+                    ? <span className="pill pill--current">PIF</span>
+                    : c.apr != null
+                      ? <span className="mono">{c.apr.toFixed(2)}%</span>
+                      : <span className="pill pill--warn">TBD</span>}
                 </td>
               </tr>
             ))}
