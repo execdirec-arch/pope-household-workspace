@@ -9,37 +9,35 @@ function TodayView({ data, bankData, toggleTodo, doneIds, onSetFocus }) {
   const billsDue = (d.bills || []).filter(b => b.status === "due-soon").length;
   const debtTotal = d.debt ? d.debt.total : 0;
 
-  // Spending chips — current pay cycle window
+  // Spending chips — current Mon–Sun week
   const spendChips = (() => {
     const spending = d.spending;
     if (!spending) return null;
-    const payDates = (d.paySchedule?.dates || [])
-      .map(s => { const [y,m,day] = s.split("-").map(Number); return new Date(y, m-1, day); })
-      .sort((a,b) => a-b);
     const now = new Date(); now.setHours(0,0,0,0);
-    const cycleStart = [...payDates].reverse().find(p => p <= now) || payDates[0];
-    const cycleEnd   = payDates.find(p => p > now);
-    const cycleTxns  = [];
+    const dow = now.getDay();
+    const weekStart = new Date(now); weekStart.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
+    const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 7);
+    const weekTxns  = [];
     if (bankData?.accounts) {
       for (const acct of bankData.accounts) {
         for (const tx of (acct.transactions || [])) {
           const d2 = new Date(tx.date); d2.setHours(0,0,0,0);
-          if (d2 >= cycleStart && (!cycleEnd || d2 < cycleEnd)) cycleTxns.push(tx);
+          if (d2 >= weekStart && d2 < weekEnd) weekTxns.push(tx);
         }
       }
     }
     const discRaw = (() => { try { return JSON.parse(localStorage.getItem("phw.disc") || "[]"); } catch { return []; } })();
-    const cycleDisc = discRaw.filter(e => { const d2 = new Date(e.date); d2.setHours(0,0,0,0); return d2 >= cycleStart && (!cycleEnd || d2 < cycleEnd); });
+    const weekDisc = discRaw.filter(e => { const d2 = new Date(e.date); d2.setHours(0,0,0,0); return d2 >= weekStart && d2 < weekEnd; });
     return spending.categories.map(cat => {
       if (cat.manualOnly) {
-        const spent = cycleDisc.reduce((s,e) => s + e.amount, 0);
-        return { ...cat, spent, remaining: cat.budgetPerCycle - spent };
+        const spent = weekDisc.reduce((s,e) => s + e.amount, 0);
+        return { ...cat, spent, remaining: cat.budgetPerWeek - spent };
       }
       const kws = cat.txnKeywords.map(k => k.toLowerCase());
-      const spent = cycleTxns
+      const spent = weekTxns
         .filter(tx => kws.some(k => (tx.description||"").toLowerCase().includes(k)) && Number(tx.amount) > 0)
         .reduce((s,tx) => s + Number(tx.amount), 0);
-      return { ...cat, spent, remaining: cat.budgetPerCycle - spent };
+      return { ...cat, spent, remaining: cat.budgetPerWeek - spent };
     });
   })();
 
@@ -80,7 +78,8 @@ function TodayView({ data, bankData, toggleTodo, doneIds, onSetFocus }) {
                     <div style={{height:"100%", width:pct+"%", background:color, borderRadius:2}} />
                   </div>
                   <div style={{fontSize:10, color:"var(--fg-3)", marginTop:2}}>
-                    {fmt(cat.spent)} spent · {fmt(cat.budgetPerCycle)} budget
+                    {fmt(cat.spent)} spent · {fmt(cat.budgetPerWeek)}/wk
+                    {cat.id === "grocery" && " · 2 shops/cycle"}
                   </div>
                 </div>
               </div>

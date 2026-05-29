@@ -153,21 +153,20 @@ window.WORKSPACE_DATA = {
 
   // Spending budgets — variable categories tracked against bank transactions + manual entries
   spending: {
-    cycleWeeks: 2,  // budget resets each pay cycle (2 weeks)
     categories: [
       {
         id: "grocery",
         label: "Groceries",
         emoji: "🛒",
-        budgetPerCycle: 450,   // $900/mo ÷ 2 pay cycles
+        budgetPerWeek: 225,    // $900/mo ÷ 4 weeks. 2 shops per pay cycle = $450/cycle total expected.
         txnKeywords: ["costco", "walmart", "kroger", "whole foods", "instacart", "uber eats", "doordash", "winn dixie", "rouses", "albertson", "aldi", "trader joe"],
-        note: "Includes Costco delivery markup. Uber Eats here = grocery delivery, not restaurant.",
+        note: "2 shops per pay cycle. Uber Eats = Costco delivery. $225/wk × 2 = $450 per cycle.",
       },
       {
         id: "gas",
         label: "Gas",
         emoji: "⛽",
-        budgetPerCycle: 75,    // $150/mo ÷ 2
+        budgetPerWeek: 38,     // $150/mo ÷ 4 weeks
         txnKeywords: ["shell", "circle k", "chevron", "exxon", "bp ", "murphy", "speedway", "valero", "racetrac"],
         note: "Fuel only. Car wash excluded (separate bill).",
       },
@@ -175,7 +174,7 @@ window.WORKSPACE_DATA = {
         id: "pharmacy",
         label: "Health",
         emoji: "💊",
-        budgetPerCycle: 50,    // $100/mo ÷ 2
+        budgetPerWeek: 25,     // $100/mo ÷ 4 weeks
         txnKeywords: ["cvs", "walgreens", "hometown pharmacy", "bonin clinic", "copay", "lab corp", "quest diag"],
         note: "Pharmacy, copays, clinic visits.",
       },
@@ -183,7 +182,7 @@ window.WORKSPACE_DATA = {
         id: "household",
         label: "Household",
         emoji: "🏠",
-        budgetPerCycle: 75,    // $150/mo ÷ 2
+        budgetPerWeek: 38,     // $150/mo ÷ 4 weeks
         txnKeywords: ["amazon", "home depot", "lowes", "target", "dollar tree", "dollar general"],
         note: "Amazon, hardware, misc household supplies.",
       },
@@ -191,8 +190,8 @@ window.WORKSPACE_DATA = {
         id: "discretionary",
         label: "Discretionary",
         emoji: "✨",
-        budgetPerCycle: 188,   // ~$375/mo (restaurants $200 + coffee $75 + kids $100) ÷ 2
-        txnKeywords: [],        // manual only — user logs these; no auto-match to avoid double-counting
+        budgetPerWeek: 94,     // ~$375/mo (restaurants $200 + coffee $75 + kids $100) ÷ 4 weeks
+        txnKeywords: [],
         note: "Dates, clothing, coffee runs, kids' incidentals. Truly optional spending.",
         manualOnly: true,
       },

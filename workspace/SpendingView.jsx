@@ -3,23 +3,21 @@ function SpendingView({ data, bankData }) {
   const { useState, useEffect } = React;
 
   const spending = data.spending || { categories: [] };
-  const payDates = (data.paySchedule?.dates || [])
-    .map(s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); })
-    .sort((a,b) => a-b);
 
-  // Current cycle: most recent payday up to next payday
+  // Current week: Mon–Sun
   const today = new Date(); today.setHours(0,0,0,0);
-  const cycleStart = [...payDates].reverse().find(d => d <= today) || payDates[0];
-  const cycleEnd   = payDates.find(d => d > today);
-  const daysLeft   = cycleEnd ? Math.ceil((cycleEnd - today) / 86400000) : null;
+  const dow = today.getDay(); // 0=Sun
+  const weekStart = new Date(today); weekStart.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+  const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 7);
+  const daysLeft  = Math.ceil((weekEnd - today) / 86400000);
 
-  // All transactions in this cycle
+  // All transactions this week
   const cycleTxns = [];
   if (bankData?.accounts) {
     for (const acct of bankData.accounts) {
       for (const tx of (acct.transactions || [])) {
         const d = new Date(tx.date); d.setHours(0,0,0,0);
-        if (d >= cycleStart && (!cycleEnd || d < cycleEnd)) cycleTxns.push(tx);
+        if (d >= weekStart && d < weekEnd) cycleTxns.push(tx);
       }
     }
   }
@@ -28,6 +26,7 @@ function SpendingView({ data, bankData }) {
   const [discEntries, setDiscEntries] = useState(() => {
     try { return JSON.parse(localStorage.getItem("phw.disc") || "[]"); } catch { return []; }
   });
+
   const [addLabel, setAddLabel] = useState("");
   const [addAmt, setAddAmt] = useState("");
   const [showAdd, setShowAdd] = useState(false);
@@ -36,10 +35,10 @@ function SpendingView({ data, bankData }) {
     localStorage.setItem("phw.disc", JSON.stringify(discEntries));
   }, [discEntries]);
 
-  // Only keep disc entries from this cycle
+  // Only keep disc entries from this week
   const cycleDisc = discEntries.filter(e => {
     const d = new Date(e.date); d.setHours(0,0,0,0);
-    return d >= cycleStart && (!cycleEnd || d < cycleEnd);
+    return d >= weekStart && d < weekEnd;
   });
   const discTotal = cycleDisc.reduce((s,e) => s + e.amount, 0);
 
@@ -81,7 +80,7 @@ function SpendingView({ data, bankData }) {
   const nonDisc = cats.filter(c => !c.manualOnly);
   const discCat = cats.find(c => c.manualOnly);
 
-  const totalBudget = cats.reduce((s,c) => s + c.budgetPerCycle, 0);
+  const totalBudget = cats.reduce((s,c) => s + c.budgetPerWeek, 0);
   const totalSpent  = cats.reduce((s,c) => s + getCategorySpend(c).total, 0);
   const totalLeft   = totalBudget - totalSpent;
 
@@ -91,7 +90,7 @@ function SpendingView({ data, bankData }) {
         <div>
           <h1 className="view__title">Spending.</h1>
           <p className="view__subtitle">
-            {cycleStart && `Cycle: ${cycleStart.toLocaleDateString("en-US", {month:"short",day:"numeric"})} → ${cycleEnd ? cycleEnd.toLocaleDateString("en-US", {month:"short",day:"numeric"}) : "?"}`}
+            {`Week of ${weekStart.toLocaleDateString("en-US", {month:"short",day:"numeric"})} → ${new Date(weekEnd.getTime()-86400000).toLocaleDateString("en-US", {month:"short",day:"numeric"})}`}
             {daysLeft != null && ` · ${daysLeft} day${daysLeft !== 1 ? "s" : ""} left`}
             {!bankData && <span style={{marginLeft:8, color:"var(--fg-3)", fontSize:12}}>· connect bank for auto-tracking</span>}
           </p>
@@ -107,15 +106,15 @@ function SpendingView({ data, bankData }) {
       <div style={{display:"flex", flexWrap:"wrap", gap:10, marginBottom:"var(--section-pad)"}}>
         {cats.map(cat => {
           const {total} = getCategorySpend(cat);
-          const pct = Math.min(100, (total / cat.budgetPerCycle) * 100);
-          const over = total > cat.budgetPerCycle;
+          const pct = Math.min(100, (total / cat.budgetPerWeek) * 100);
+          const over = total > cat.budgetPerWeek;
           const color = over ? "#ef4444" : pct > 80 ? "#f59e0b" : "#22c55e";
           return (
             <div key={cat.id} className="card" style={{minWidth:140, flex:"1 1 140px", padding:"12px 14px"}}>
               <div style={{fontSize:18, marginBottom:4}}>{cat.emoji}</div>
               <div style={{fontSize:12, fontWeight:700, marginBottom:2}}>{cat.label}</div>
               <div style={{fontSize:20, fontWeight:800, color, lineHeight:1}}>{fmt(total)}</div>
-              <div style={{fontSize:10, color:"var(--fg-3)", marginBottom:6}}>of {fmt(cat.budgetPerCycle)}</div>
+              <div style={{fontSize:10, color:"var(--fg-3)", marginBottom:6}}>of {fmt(cat.budgetPerWeek)}</div>
               <div style={{height:4, background:"var(--paper-deep)", borderRadius:2, overflow:"hidden"}}>
                 <div style={{height:"100%", width:pct+"%", background:color, borderRadius:2}} />
               </div>
@@ -127,7 +126,7 @@ function SpendingView({ data, bankData }) {
       {/* Auto-tracked categories */}
       {nonDisc.map(cat => {
         const {total, txns} = getCategorySpend(cat);
-        const remaining = cat.budgetPerCycle - total;
+        const remaining = cat.budgetPerWeek - total;
         const over = remaining < 0;
         return (
           <div key={cat.id} style={{marginBottom:"var(--section-pad)"}}>
@@ -163,7 +162,7 @@ function SpendingView({ data, bankData }) {
 
       {/* Discretionary — manual */}
       {discCat && (() => {
-        const remaining = discCat.budgetPerCycle - discTotal;
+        const remaining = discCat.budgetPerWeek - discTotal;
         const over = remaining < 0;
         return (
           <div style={{marginBottom:"var(--section-pad)"}}>
@@ -177,7 +176,7 @@ function SpendingView({ data, bankData }) {
             {/* Big remaining card */}
             <div className="card" style={{
               marginBottom: 10,
-              borderLeft: `4px solid ${over ? "#ef4444" : remaining < discCat.budgetPerCycle * 0.25 ? "#f59e0b" : "#22c55e"}`,
+              borderLeft: `4px solid ${over ? "#ef4444" : remaining < discCat.budgetPerWeek * 0.25 ? "#f59e0b" : "#22c55e"}`,
               padding: "20px 24px",
               display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20,
             }}>
