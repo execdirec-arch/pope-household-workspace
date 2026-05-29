@@ -15,6 +15,7 @@
 <script src="vendor/babel.min.js"></script>
 
 <script src="workspace/config.js"></script>
+<script src="workspace/sync.js"></script>
 <script src="workspace/data.js"></script>
 <script src="workspace/vault.js"></script>
 <script type="text/babel" src="workspace/LoginView.jsx"></script>
@@ -67,8 +68,9 @@ function App() {
     try { return JSON.parse(localStorage.getItem("phw.session") || "null"); } catch { return null; }
   });
 
-  function handleLogin(user) {
+  async function handleLogin(user) {
     localStorage.setItem("phw.session", JSON.stringify(user));
+    await window.StateSync.load(user.email);
     setSession(user);
   }
 
@@ -101,6 +103,16 @@ function AuthenticatedApp({ session, onLogout }) {
       .then(j => { if (j && !j.error) setBankData(j); })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    const save = () => window.StateSync.save(session.email);
+    const interval = setInterval(save, 30000);
+    window.addEventListener("beforeunload", save);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("beforeunload", save);
+    };
+  }, [session.email]);
 
   function toggleTodo(id) {
     const s = new Set(doneIdsArr);
