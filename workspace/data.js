@@ -117,23 +117,45 @@ window.WORKSPACE_DATA = {
     },
   ],
 
-  // Bills — due soon + ongoing
+  // Bills — dueDay is day-of-month (consistent across months from spreadsheet)
   bills: [
-    { id: "b1", name: "Mortgage",     amount: 2975.82, dueDate: "2026-06-01", autopay: false, status: "due-soon",  servicer: "NewRez/ShellPoint",  method: "Neighbors FCU" },
-    { id: "b2", name: "HELOC",        amount: 686.94,  dueDate: "2026-06-01", autopay: false, status: "due-soon",  servicer: "Dovenmuehl",         method: "Neighbors FCU" },
-    { id: "b3", name: "Car Payment",  amount: 559.80,  dueDate: "2026-06-03", autopay: false, status: "upcoming",  servicer: "Neighbors ECM",      method: "Neighbors FCU" },
-    { id: "b4", name: "T-Mobile",     amount: 247.43,  dueDate: "[TBD]",      autopay: true,  status: "active",    servicer: "T-Mobile",           method: "autopay" },
-    { id: "b5", name: "RMA Music",    amount: 344.62,  dueDate: "[TBD]",      autopay: true,  status: "active",    servicer: "RMA Music School",   method: "PayPal" },
-    { id: "b6", name: "Life Ins",     amount: 113.36,  dueDate: "[TBD]",      autopay: true,  status: "active",    servicer: "[TBD]",              method: "autopay" },
-    { id: "b7", name: "Lawn",         amount: 195.00,  dueDate: "[TBD]",      autopay: false, status: "active",    servicer: "[provider TBD]",     method: "check/cash" },
-    { id: "b8", name: "Netflix",      amount: 27.61,   dueDate: "[TBD]",      autopay: true,  status: "active",    servicer: "Netflix",            method: "credit card" },
-    { id: "b9", name: "Kitty Poo",    amount: 60.88,   dueDate: "[TBD]",      autopay: true,  status: "active",    servicer: "Kitty Poo Club",     method: "autopay" },
-    { id: "b10", name: "Xbox",        amount: 33.69,   dueDate: "[TBD]",      autopay: true,  status: "active",    servicer: "Microsoft",          method: "Neighbors FCU" },
-    { id: "b11", name: "MS 365",      amount: 14.05,   dueDate: "[TBD]",      autopay: true,  status: "active",    servicer: "Microsoft",          method: "Neighbors FCU" },
-    { id: "b12", name: "Prime Video", amount: 14.48,   dueDate: "[TBD]",      autopay: true,  status: "active",    servicer: "Amazon",             method: "Neighbors FCU" },
-    { id: "b13", name: "Apple",       amount: 9.93,    dueDate: "[TBD]",      autopay: true,  status: "active",    servicer: "Apple",              method: "PayPal" },
-    { id: "b14", name: "Affirm/Anna", amount: 58.81,   dueDate: "[TBD]",      autopay: true,  status: "active",    servicer: "Affirm",             method: "autopay" },
+    { id: "b1",  name: "Mortgage",      amount: 2975.82, dueDay: 17, autopay: false, status: "active", servicer: "NewRez/ShellPoint", method: "Neighbors FCU", note: "Floats 14-17; manual" },
+    { id: "b2",  name: "HELOC",         amount: 686.94,  dueDay: 16, autopay: true,  status: "active", servicer: "Dovenmuehl",        method: "autopay" },
+    { id: "b3",  name: "Car Payment",   amount: 559.80,  dueDay: 22, autopay: false, status: "active", servicer: "Neighbors ECM",     method: "Neighbors FCU" },
+    { id: "b4",  name: "T-Mobile",      amount: 247.43,  dueDay: 2,  autopay: true,  status: "active", servicer: "T-Mobile",          method: "autopay", note: "Confirm amount — tracker shows $487" },
+    { id: "b5",  name: "RMA Music",     amount: 344.62,  dueDay: 16, autopay: true,  status: "active", servicer: "RMA Music School",  method: "PayPal",  note: "Tracker shows $450 — confirm" },
+    { id: "b6",  name: "Life Ins",      amount: 113.36,  dueDay: 1,  autopay: true,  status: "active", servicer: "[TBD]",             method: "autopay" },
+    { id: "b7",  name: "Lawn",          amount: 195.00,  dueDay: 30, autopay: false, status: "active", servicer: "[TBD]",             method: "check/cash", note: "Tracker shows $315 — confirm" },
+    { id: "b8",  name: "Netflix",       amount: 27.61,   dueDay: 9,  autopay: true,  status: "active", servicer: "Netflix",           method: "credit card" },
+    { id: "b9",  name: "Kitty Poo",     amount: 60.88,   dueDay: 3,  autopay: true,  status: "active", servicer: "Kitty Poo Club",    method: "autopay" },
+    { id: "b10", name: "Xbox",          amount: 33.69,   dueDay: null, autopay: true, status: "active", servicer: "Microsoft",        method: "Neighbors FCU" },
+    { id: "b11", name: "MS 365",        amount: 14.05,   dueDay: null, autopay: true, status: "active", servicer: "Microsoft",        method: "Neighbors FCU" },
+    { id: "b12", name: "Prime Video",   amount: 14.48,   dueDay: null, autopay: true, status: "active", servicer: "Amazon",           method: "Neighbors FCU" },
+    { id: "b13", name: "Apple",         amount: 9.93,    dueDay: null, autopay: true, status: "active", servicer: "Apple",            method: "PayPal" },
+    { id: "b14", name: "Affirm/Anna",   amount: 58.81,   dueDay: 10, autopay: true,  status: "active", servicer: "Affirm",           method: "autopay" },
+    { id: "b15", name: "Electric",      amount: 321.00,  dueDay: 2,  autopay: true,  status: "active", servicer: "Entergy/CLECO",    method: "autopay" },
+    { id: "b16", name: "Internet",      amount: 100.00,  dueDay: 13, autopay: true,  status: "active", servicer: "[TBD]",            method: "autopay" },
+    { id: "b17", name: "Car Insurance", amount: 300.00,  dueDay: 16, autopay: true,  status: "active", servicer: "Progressive",      method: "autopay" },
+    { id: "b18", name: "Hulu",          amount: 12.00,   dueDay: 12, autopay: true,  status: "active", servicer: "Hulu",             method: "credit card" },
+    { id: "b19", name: "Dropbox",       amount: 12.00,   dueDay: 27, autopay: true,  status: "active", servicer: "Dropbox",          method: "credit card" },
+    { id: "b20", name: "Citi (debt)",   amount: 713.00,  dueDay: 23, autopay: false, status: "active", servicer: "Citi",             method: "Neighbors FCU" },
   ],
+
+  // Oliver's bi-weekly pay schedule (Fridays). Anchor: Dec 26 2025.
+  // Next paydates in 2026: Jan 9, Jan 23, Feb 6, Feb 20, Mar 6, Mar 20, Apr 3, Apr 17,
+  //   May 1, May 15, May 29, Jun 12, Jun 26, Jul 10, Jul 24 ...
+  paySchedule: {
+    frequency: "biweekly",
+    amount: 5206.13,
+    name: "Oliver (MP)",
+    // ISO dates of upcoming paydays
+    dates: [
+      "2026-06-12", "2026-06-26",
+      "2026-07-10", "2026-07-24",
+      "2026-08-07", "2026-08-21",
+      "2026-09-04", "2026-09-18",
+    ],
+  },
 
   // Credit card debt summary
   debt: {

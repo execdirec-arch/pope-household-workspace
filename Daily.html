@@ -21,6 +21,7 @@
 <script type="text/babel" src="workspace/InboxView.jsx"></script>
 <script type="text/babel" src="workspace/AskView.jsx"></script>
 <script type="text/babel" src="workspace/BillsView.jsx"></script>
+<script type="text/babel" src="workspace/BillCalendarView.jsx"></script>
 <script type="text/babel" src="workspace/DebtView.jsx"></script>
 <script type="text/babel" src="workspace/ProjectsView.jsx"></script>
 <script type="text/babel" src="workspace/FamilyView.jsx"></script>
@@ -142,8 +143,9 @@ function App() {
           {view === "today"  && <ErrorBoundary view="Today"><TodayView    data={data} doneIds={doneIds} toggleTodo={toggleTodo} onSetFocus={onSetFocus} /></ErrorBoundary>}
           {view === "inbox"  && <ErrorBoundary view="Inbox"><InboxView    data={data} /></ErrorBoundary>}
           {view === "ask"    && <ErrorBoundary view="Ask"><AskView        data={data} /></ErrorBoundary>}
-          {view === "bills"  && <ErrorBoundary view="Bills"><BillsView    data={data} /></ErrorBoundary>}
-          {view === "debt"   && <ErrorBoundary view="Debt"><DebtView      data={data} /></ErrorBoundary>}
+          {view === "bills"   && <ErrorBoundary view="Bills"><BillsView       data={data} /></ErrorBoundary>}
+          {view === "billmap" && <ErrorBoundary view="BillMap"><BillCalendarView data={data} /></ErrorBoundary>}
+          {view === "debt"    && <ErrorBoundary view="Debt"><DebtView        data={data} /></ErrorBoundary>}
           {view === "wips"   && <ErrorBoundary view="Projects"><ProjectsView data={data} onSetFocus={onSetFocus} /></ErrorBoundary>}
           {view === "family" && <ErrorBoundary view="Family"><FamilyView  data={data} /></ErrorBoundary>}
         </div>
