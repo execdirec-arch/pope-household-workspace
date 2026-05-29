@@ -151,6 +151,54 @@ window.WORKSPACE_DATA = {
     { id: "b30", name: "Apple Services", amount: 9.99,    dueDay: 26,   autopay: true,  status: "active", servicer: "Apple",             method: "PayPal",      txnMatch: "apple" },
   ],
 
+  // Spending budgets — variable categories tracked against bank transactions + manual entries
+  spending: {
+    cycleWeeks: 2,  // budget resets each pay cycle (2 weeks)
+    categories: [
+      {
+        id: "grocery",
+        label: "Groceries",
+        emoji: "🛒",
+        budgetPerCycle: 450,   // $900/mo ÷ 2 pay cycles
+        txnKeywords: ["costco", "walmart", "kroger", "whole foods", "instacart", "uber eats", "doordash", "winn dixie", "rouses", "albertson", "aldi", "trader joe"],
+        note: "Includes Costco delivery markup. Uber Eats here = grocery delivery, not restaurant.",
+      },
+      {
+        id: "gas",
+        label: "Gas",
+        emoji: "⛽",
+        budgetPerCycle: 75,    // $150/mo ÷ 2
+        txnKeywords: ["shell", "circle k", "chevron", "exxon", "bp ", "murphy", "speedway", "valero", "racetrac"],
+        note: "Fuel only. Car wash excluded (separate bill).",
+      },
+      {
+        id: "pharmacy",
+        label: "Health",
+        emoji: "💊",
+        budgetPerCycle: 50,    // $100/mo ÷ 2
+        txnKeywords: ["cvs", "walgreens", "hometown pharmacy", "bonin clinic", "copay", "lab corp", "quest diag"],
+        note: "Pharmacy, copays, clinic visits.",
+      },
+      {
+        id: "household",
+        label: "Household",
+        emoji: "🏠",
+        budgetPerCycle: 75,    // $150/mo ÷ 2
+        txnKeywords: ["amazon", "home depot", "lowes", "target", "dollar tree", "dollar general"],
+        note: "Amazon, hardware, misc household supplies.",
+      },
+      {
+        id: "discretionary",
+        label: "Discretionary",
+        emoji: "✨",
+        budgetPerCycle: 188,   // ~$375/mo (restaurants $200 + coffee $75 + kids $100) ÷ 2
+        txnKeywords: [],        // manual only — user logs these; no auto-match to avoid double-counting
+        note: "Dates, clothing, coffee runs, kids' incidentals. Truly optional spending.",
+        manualOnly: true,
+      },
+    ],
+  },
+
   // Oliver's bi-weekly pay schedule. Confirmed: $5,782.90 net (raise confirmed May 2026).
   paySchedule: {
     frequency: "biweekly",

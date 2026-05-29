@@ -1,5 +1,5 @@
 /* TODAY view — household daily briefing rendered as a workspace dashboard. */
-function TodayView({ data, toggleTodo, doneIds, onSetFocus }) {
+function TodayView({ data, bankData, toggleTodo, doneIds, onSetFocus }) {
   const d = data;
   const tasks = [...d.todos.development, ...(d.todos.programs || []), ...(d.todos.grants || [])];
   const doneCount = tasks.filter(t => doneIds.has(t.id)).length;
@@ -8,6 +8,40 @@ function TodayView({ data, toggleTodo, doneIds, onSetFocus }) {
 
   const billsDue = (d.bills || []).filter(b => b.status === "due-soon").length;
   const debtTotal = d.debt ? d.debt.total : 0;
+
+  // Spending chips — current pay cycle window
+  const spendChips = (() => {
+    const spending = d.spending;
+    if (!spending) return null;
+    const payDates = (d.paySchedule?.dates || [])
+      .map(s => { const [y,m,day] = s.split("-").map(Number); return new Date(y, m-1, day); })
+      .sort((a,b) => a-b);
+    const now = new Date(); now.setHours(0,0,0,0);
+    const cycleStart = [...payDates].reverse().find(p => p <= now) || payDates[0];
+    const cycleEnd   = payDates.find(p => p > now);
+    const cycleTxns  = [];
+    if (bankData?.accounts) {
+      for (const acct of bankData.accounts) {
+        for (const tx of (acct.transactions || [])) {
+          const d2 = new Date(tx.date); d2.setHours(0,0,0,0);
+          if (d2 >= cycleStart && (!cycleEnd || d2 < cycleEnd)) cycleTxns.push(tx);
+        }
+      }
+    }
+    const discRaw = (() => { try { return JSON.parse(localStorage.getItem("phw.disc") || "[]"); } catch { return []; } })();
+    const cycleDisc = discRaw.filter(e => { const d2 = new Date(e.date); d2.setHours(0,0,0,0); return d2 >= cycleStart && (!cycleEnd || d2 < cycleEnd); });
+    return spending.categories.map(cat => {
+      if (cat.manualOnly) {
+        const spent = cycleDisc.reduce((s,e) => s + e.amount, 0);
+        return { ...cat, spent, remaining: cat.budgetPerCycle - spent };
+      }
+      const kws = cat.txnKeywords.map(k => k.toLowerCase());
+      const spent = cycleTxns
+        .filter(tx => kws.some(k => (tx.description||"").toLowerCase().includes(k)) && Number(tx.amount) > 0)
+        .reduce((s,tx) => s + Number(tx.amount), 0);
+      return { ...cat, spent, remaining: cat.budgetPerCycle - spent };
+    });
+  })();
 
   return (
     <div>
@@ -20,6 +54,40 @@ function TodayView({ data, toggleTodo, doneIds, onSetFocus }) {
           </p>
         </div>
       </div>
+
+      {/* Spending chips */}
+      {spendChips && (
+        <div style={{display:"flex", flexWrap:"wrap", gap:8, marginBottom:"var(--section-pad)"}}>
+          {spendChips.map(cat => {
+            const pct = Math.min(100, (cat.spent / cat.budgetPerCycle) * 100);
+            const over = cat.remaining < 0;
+            const warn = !over && pct > 80;
+            const color = over ? "#ef4444" : warn ? "#f59e0b" : "#22c55e";
+            const fmt = n => "$" + Math.abs(Math.round(n)).toLocaleString();
+            return (
+              <div key={cat.id} style={{
+                display:"flex", alignItems:"center", gap:10,
+                background:"var(--paper)", border:"1px solid var(--border)",
+                borderRadius:8, padding:"8px 14px", minWidth:160, flex:"1 1 160px",
+              }}>
+                <span style={{fontSize:18}}>{cat.emoji}</span>
+                <div style={{flex:1, minWidth:0}}>
+                  <div style={{display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:3}}>
+                    <span style={{fontSize:11, fontWeight:700, color:"var(--fg-2)"}}>{cat.label}</span>
+                    <span style={{fontSize:12, fontWeight:800, color}}>{over ? "−"+fmt(cat.remaining) : fmt(cat.remaining)+" left"}</span>
+                  </div>
+                  <div style={{height:4, background:"var(--paper-deep)", borderRadius:2, overflow:"hidden"}}>
+                    <div style={{height:"100%", width:pct+"%", background:color, borderRadius:2}} />
+                  </div>
+                  <div style={{fontSize:10, color:"var(--fg-3)", marginTop:2}}>
+                    {fmt(cat.spent)} spent · {fmt(cat.budgetPerCycle)} budget
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Strategic Nudges */}
       <div className="section-header">

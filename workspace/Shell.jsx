@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { id: "bills",    label: "Bills",    icon: "fund",    count: (d) => (d.bills || []).filter(b => b.status === "due-soon").length,            section: "Money" },
   { id: "billmap",  label: "Bill Map", icon: "clock",   count: null,                                                                          section: "Money" },
   { id: "debt",     label: "Debt",     icon: "flag",    count: null,                                                                          section: "Money" },
+  { id: "spending", label: "Spending", icon: "fund",    count: null,                                                                          section: "Money" },
   { id: "wips",     label: "Projects", icon: "wips",    count: (d) => (d.wips || []).filter(w => w.urgency === "hot").length,                 section: "Household" },
   { id: "family",   label: "Family",   icon: "clock",   count: null,                                                                          section: "Household" },
 ];
