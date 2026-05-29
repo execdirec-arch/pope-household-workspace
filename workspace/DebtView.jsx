@@ -1,20 +1,59 @@
-/* DEBT view — avalanche payoff tracker + card-by-card breakdown. */
+/* DEBT view — avalanche payoff tracker with countdown and mark-paid */
 function DebtView({ data }) {
+  const { useState, useEffect } = React;
   const debt = data.debt || { total: 0, strategy: "Avalanche", cards: [] };
   const cards = debt.cards || [];
-  const overLimit = cards.filter(c => c.utilization > 100);
-  const needsApr = cards.filter(c => c.apr == null && !c.pif).length;
 
-  // Sort by avalanche rank first, then by APR desc, then utilization desc
-  const sorted = [...cards].sort((a, b) => {
+  const [paidNames, setPaidNames] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("phw.paidCards") || "[]"); } catch { return []; }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("phw.paidCards", JSON.stringify(paidNames));
+  }, [paidNames]);
+
+  function togglePaid(name) {
+    setPaidNames(prev =>
+      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
+    );
+  }
+
+  const paidSet = new Set(paidNames);
+  const activeCards = cards.filter(c => !paidSet.has(c.name) && !c.pif);
+  const paidCards   = cards.filter(c =>  paidSet.has(c.name));
+  const pifCards    = cards.filter(c =>  c.pif);
+
+  // Sort active by avalanche rank, then unranked at bottom
+  const sortedActive = [...activeCards].sort((a, b) => {
     if (a.avalancheRank != null && b.avalancheRank != null) return a.avalancheRank - b.avalancheRank;
     if (a.avalancheRank != null) return -1;
     if (b.avalancheRank != null) return 1;
-    if (a.apr != null && b.apr != null) return b.apr - a.apr;
-    if (a.apr != null) return -1;
-    if (b.apr != null) return 1;
-    return (b.utilization || 0) - (a.utilization || 0);
+    return (b.apr || 0) - (a.apr || 0);
   });
+
+  const currentTarget = sortedActive[0];
+
+  // Progress math
+  const startingTotal = debt.startingTotal || debt.total;
+  const paidTotal = paidCards.reduce((s, c) => s + (c.balance || 0), 0);
+  const remainingTotal = debt.total - paidTotal;
+  const progressPct = Math.min(100, (paidTotal / startingTotal) * 100);
+
+  // Per-card payoff estimate
+  const monthly = debt.monthlyToDebt || 0;
+  function monthsToPayoff(card) {
+    if (!card.balance || !monthly || !card.apr) return null;
+    const r = card.apr / 100 / 12;
+    // months = -log(1 - r*b/p) / log(1+r)  (standard amortization)
+    const val = 1 - (r * card.balance) / monthly;
+    if (val <= 0) return null; // payment too low to cover interest
+    return Math.ceil(-Math.log(val) / Math.log(1 + r));
+  }
+
+  function fmt(n) {
+    if (n == null) return "—";
+    return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
 
   return (
     <div>
@@ -22,121 +61,196 @@ function DebtView({ data }) {
         <div>
           <h1 className="view__title">Debt.</h1>
           <p className="view__subtitle">
-            ${debt.total.toLocaleString()} across {cards.length} lines. {debt.strategy}. Every dollar Lauren earns goes here.
+            {fmt(remainingTotal)} remaining across {activeCards.length} active cards. {paidCards.length > 0 && `${paidCards.length} paid off.`}
           </p>
         </div>
-        <div className="stack">
-          <div className="kpi" style={{ minWidth: 160 }}>
-            <div className="kpi__label">Total balance</div>
-            <div className="kpi__value">${debt.total.toLocaleString()}</div>
-            <div className="kpi__delta kpi__delta--down">to eliminate</div>
-            <div className="kpi__progress">
-              <div className="kpi__progress-fill" style={{ width: "0%" }} />
-            </div>
-            <div className="muted" style={{ fontSize: 10, marginTop: 4 }}>avalanche in progress</div>
-          </div>
+        <div className="kpi" style={{ minWidth: 180 }}>
+          <div className="kpi__label">Eliminated</div>
+          <div className="kpi__value">{fmt(paidTotal)}</div>
+          <div className="kpi__delta kpi__delta--up">of {fmt(startingTotal)} starting debt</div>
         </div>
       </div>
 
-      {/* Action flags */}
-      {(overLimit.length > 0 || needsApr > 0) && (
+      {/* Countdown bar */}
+      <div className="card" style={{ marginBottom: "var(--section-pad)", padding: "16px 20px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
+          <div style={{ fontWeight: 700, fontSize: 13 }}>Payoff journey</div>
+          <div style={{ fontSize: 12, color: "var(--fg-3)" }}>
+            {progressPct.toFixed(1)}% cleared · {fmt(remainingTotal)} to go
+          </div>
+        </div>
+        <div style={{ height: 10, background: "var(--paper-deep)", borderRadius: 5, overflow: "hidden", marginBottom: 6 }}>
+          <div style={{
+            height: "100%",
+            width: progressPct + "%",
+            background: "var(--rehumanize-green)",
+            borderRadius: 5,
+            transition: "width 0.4s ease",
+            minWidth: progressPct > 0 ? 4 : 0,
+          }} />
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--fg-3)" }}>
+          <span>Started: {fmt(startingTotal)}</span>
+          <span>{paidCards.length} card{paidCards.length !== 1 ? "s" : ""} paid off</span>
+          <span>Goal: $0</span>
+        </div>
+      </div>
+
+      {/* Current target */}
+      {currentTarget && (
         <>
           <div className="section-header">
-            <h2 className="section-header__title">Flags</h2>
-            <div className="section-header__meta">needs attention</div>
+            <h2 className="section-header__title">Current target</h2>
+            <div className="section-header__meta">every extra dollar goes here first</div>
           </div>
-          <div className="grid grid-2" style={{ marginBottom: 'var(--section-pad)' }}>
-            {overLimit.length > 0 && (
-              <div className="nudge nudge--urgent">
-                <div className="nudge__mark">!</div>
-                <div className="nudge__content">
-                  <h3 className="nudge__title">{overLimit.length} cards over their limit</h3>
-                  <p className="nudge__body">
-                    {overLimit.map(c => c.name).join(", ")} — all over 100% utilization. Over-limit fees may apply. These should be priorities regardless of APR.
-                  </p>
+          <div className="card" style={{ marginBottom: "var(--section-pad)", borderLeft: "4px solid var(--accent-tomato)", padding: "16px 20px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 2 }}>{currentTarget.name}</div>
+                <div style={{ fontSize: 13, color: "var(--fg-2)" }}>
+                  {currentTarget.apr != null ? currentTarget.apr.toFixed(2) + "% APR" : "APR TBD"} ·{" "}
+                  {currentTarget.balance != null ? fmt(currentTarget.balance) + " balance" : "balance TBD"}
                 </div>
+                {currentTarget.note && (
+                  <div style={{ fontSize: 12, color: "var(--fg-3)", marginTop: 4 }}>{currentTarget.note}</div>
+                )}
               </div>
-            )}
-            {needsApr > 0 && (
-              <div className="nudge nudge--major">
-                <div className="nudge__mark">★</div>
-                <div className="nudge__content">
-                  <h3 className="nudge__title">APRs missing for {needsApr} cards</h3>
-                  <p className="nudge__body">
-                    Avalanche method requires knowing each card's APR. Pull statements for all {cards.length} cards and fill in the APR column in the vault. One session; months of saved interest.
-                  </p>
-                </div>
+              <div style={{ textAlign: "right", flexShrink: 0 }}>
+                {(() => {
+                  const m = monthsToPayoff(currentTarget);
+                  return m ? (
+                    <>
+                      <div style={{ fontSize: 24, fontWeight: 800, color: "var(--rehumanize-green)", lineHeight: 1 }}>{m}</div>
+                      <div style={{ fontSize: 11, color: "var(--fg-3)" }}>months @ {fmt(monthly)}/mo</div>
+                    </>
+                  ) : (
+                    <div style={{ fontSize: 11, color: "var(--fg-3)" }}>set monthly<br/>payment to estimate</div>
+                  );
+                })()}
               </div>
-            )}
+            </div>
+            <button
+              onClick={() => togglePaid(currentTarget.name)}
+              style={{ marginTop: 12, padding: "6px 16px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: "pointer" }}
+            >
+              Mark Paid Off ✓
+            </button>
           </div>
         </>
       )}
 
-      {/* Strategy */}
+      {/* All active cards */}
       <div className="section-header">
-        <h2 className="section-header__title">Payoff strategy</h2>
+        <h2 className="section-header__title">Avalanche queue</h2>
+        <div className="section-header__meta">sorted by rank · {fmt(monthly)}/mo to debt</div>
       </div>
-      <div className="card card--tinted" style={{ marginBottom: 'var(--section-pad)' }}>
-        <div className="card__eyebrow"><span className="card__eyebrow-dot" />Avalanche method confirmed</div>
-        <p className="card__body" style={{ margin: "8px 0 0" }}>
-          <strong>Oliver's income:</strong> covers all household operations and minimum monthly payments on all cards.
-          <br />
-          <strong>Lauren's income:</strong> every dollar goes to the highest-APR card until it's paid off, then the next.
-          <br />
-          <strong>Payoff order:</strong> {needsApr > 0 ? "TBD — pull APRs first and rank cards highest to lowest." : "Ranked below by APR."}
-        </p>
-      </div>
-
-      {/* Card breakdown */}
-      <div className="section-header">
-        <h2 className="section-header__title">All cards</h2>
-        <div className="section-header__meta">sorted by avalanche rank · TBD cards at bottom</div>
-      </div>
-      <div className="card" style={{ padding: 0 }}>
+      <div className="card" style={{ padding: 0, marginBottom: "var(--section-pad)" }}>
         <table className="table">
           <thead>
             <tr>
+              <th>#</th>
               <th>Card</th>
               <th>Balance</th>
-              <th>Limit</th>
-              <th>Utilization</th>
               <th>APR</th>
+              <th>Payoff est.</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            {sorted.map((c, i) => (
-              <tr key={i}>
-                <td><div className="table__name">{c.name}</div></td>
-                <td className="mono">{c.balance != null ? "$" + c.balance.toLocaleString() : "—"}</td>
-                <td className="mono">{c.limit != null ? "$" + c.limit.toLocaleString() : "—"}</td>
-                <td>
-                  {c.utilization != null ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div style={{ flex: 1, height: 6, background: "var(--paper-deep)", borderRadius: 3, overflow: "hidden", minWidth: 60 }}>
-                        <div style={{
-                          height: "100%",
-                          width: `${Math.min(100, c.utilization)}%`,
-                          background: c.utilization > 100 ? "var(--accent-tomato)" : c.utilization > 85 ? "var(--accent-gold)" : "var(--rehumanize-green)",
-                        }} />
-                      </div>
-                      <span className={`pill pill--${c.utilization > 100 ? "urgent" : c.utilization > 85 ? "warn" : "current"}`}>
-                        {c.utilization}%
-                      </span>
-                    </div>
-                  ) : <span style={{ color: "var(--fg-3)", fontSize: 11 }}>—</span>}
-                </td>
-                <td>
-                  {c.pif
-                    ? <span className="pill pill--current">PIF</span>
-                    : c.apr != null
+            {sortedActive.map((c, i) => {
+              const m = monthsToPayoff(c);
+              const isTarget = i === 0;
+              return (
+                <tr key={c.name} style={isTarget ? { background: "rgba(239,68,68,0.04)" } : {}}>
+                  <td><span style={{ fontWeight: 700, color: isTarget ? "var(--accent-tomato)" : "var(--fg-3)", fontSize: 13 }}>{c.avalancheRank ?? "—"}</span></td>
+                  <td>
+                    <div className="table__name">{c.name}{isTarget && <span style={{ marginLeft: 6, fontSize: 10, color: "var(--accent-tomato)", fontWeight: 700 }}>TARGET</span>}</div>
+                    {c.note && <div className="table__meta" style={{ maxWidth: 280 }}>{c.note}</div>}
+                  </td>
+                  <td className="mono">{c.balance != null ? fmt(c.balance) : "—"}</td>
+                  <td>
+                    {c.apr != null
                       ? <span className="mono">{c.apr.toFixed(2)}%</span>
                       : <span className="pill pill--warn">TBD</span>}
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td>
+                    {m
+                      ? <span className="mono" style={{ color: "var(--fg-2)" }}>{m} mo</span>
+                      : <span style={{ color: "var(--fg-3)", fontSize: 11 }}>—</span>}
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => togglePaid(c.name)}
+                      style={{ padding: "3px 10px", fontSize: 11, background: "transparent", border: "1px solid var(--border)", borderRadius: 4, cursor: "pointer", color: "var(--fg-2)", whiteSpace: "nowrap" }}
+                    >
+                      Mark paid
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
+
+      {/* PIF cards */}
+      {pifCards.length > 0 && (
+        <>
+          <div className="section-header">
+            <h2 className="section-header__title">Paid in full monthly</h2>
+            <div className="section-header__meta">not carrying a balance</div>
+          </div>
+          <div className="card" style={{ padding: 0, marginBottom: "var(--section-pad)" }}>
+            <table className="table">
+              <thead><tr><th>Card</th><th>Limit</th><th>APR</th><th>Note</th></tr></thead>
+              <tbody>
+                {pifCards.map(c => (
+                  <tr key={c.name}>
+                    <td><div className="table__name">{c.name}</div></td>
+                    <td className="mono">{c.limit != null ? fmt(c.limit) : "—"}</td>
+                    <td><span className="pill pill--current" style={{ background: "#22c55e", color: "#fff" }}>PIF</span></td>
+                    <td><div className="table__meta">{c.note}</div></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
+      {/* Paid off cards */}
+      {paidCards.length > 0 && (
+        <>
+          <div className="section-header">
+            <h2 className="section-header__title">Paid off</h2>
+            <div className="section-header__meta">{fmt(paidTotal)} eliminated</div>
+          </div>
+          <div className="card" style={{ padding: 0 }}>
+            <table className="table">
+              <thead><tr><th>Card</th><th>Was</th><th>APR</th><th></th></tr></thead>
+              <tbody>
+                {paidCards.map(c => (
+                  <tr key={c.name} style={{ background: "rgba(34,197,94,0.06)" }}>
+                    <td>
+                      <div className="table__name" style={{ color: "#22c55e" }}>✓ {c.name}</div>
+                    </td>
+                    <td className="mono" style={{ color: "var(--fg-3)", textDecoration: "line-through" }}>{fmt(c.balance)}</td>
+                    <td><span className="mono" style={{ color: "var(--fg-3)" }}>{c.apr != null ? c.apr.toFixed(2) + "%" : "—"}</span></td>
+                    <td>
+                      <button
+                        onClick={() => togglePaid(c.name)}
+                        style={{ padding: "3px 10px", fontSize: 11, background: "transparent", border: "1px solid var(--border)", borderRadius: 4, cursor: "pointer", color: "var(--fg-3)" }}
+                      >
+                        Undo
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </div>
   );
 }

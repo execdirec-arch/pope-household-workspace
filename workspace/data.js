@@ -168,6 +168,8 @@ window.WORKSPACE_DATA = {
   // Credit card debt — avalanche order (highest APR first). Balances as of May 2026.
   debt: {
     total: 65159,
+    startingTotal: 65159,       // Frozen starting point — never update this
+    monthlyToDebt: 1500,        // Lauren's estimated monthly contribution to avalanche (update as income clarifies)
     strategy: "Avalanche — highest APR first. Lauren's income → top card each pay period.",
     cards: [
       { name: "First Premier 8513", last4: "8513", limit: 1600,  balance: 1352,  apr: 36.00, avalancheRank: 1,  note: "First Premier — highest APR, first target" },
