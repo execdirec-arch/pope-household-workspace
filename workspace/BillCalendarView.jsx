@@ -13,9 +13,13 @@ function BillCalendarView({ data }) {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDow = new Date(year, month, 1).getDay(); // 0=Sun
 
-  // Pay dates falling in this month
+  // Pay dates falling in this month — parse as local to avoid UTC-offset day shift
+  function parseLocalDate(iso) {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
   const monthPayDays = paySchedule.dates
-    .map(d => new Date(d))
+    .map(parseLocalDate)
     .filter(d => d.getFullYear() === year && d.getMonth() === month)
     .map(d => d.getDate());
 

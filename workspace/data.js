@@ -141,15 +141,13 @@ window.WORKSPACE_DATA = {
     { id: "b20", name: "Citi (debt)",   amount: 713.00,  dueDay: 23, autopay: false, status: "active", servicer: "Citi",             method: "Neighbors FCU" },
   ],
 
-  // Oliver's bi-weekly pay schedule (Fridays). Anchor: Dec 26 2025.
-  // Next paydates in 2026: Jan 9, Jan 23, Feb 6, Feb 20, Mar 6, Mar 20, Apr 3, Apr 17,
-  //   May 1, May 15, May 29, Jun 12, Jun 26, Jul 10, Jul 24 ...
+  // Oliver's bi-weekly pay schedule. Anchor: May 29 2026 (confirmed next payday).
   paySchedule: {
     frequency: "biweekly",
     amount: 5206.13,
     name: "Oliver (MP)",
-    // ISO dates of upcoming paydays
     dates: [
+      "2026-05-29",
       "2026-06-12", "2026-06-26",
       "2026-07-10", "2026-07-24",
       "2026-08-07", "2026-08-21",
