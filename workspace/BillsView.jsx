@@ -107,9 +107,9 @@ function BillsView({ data, bankData }) {
                     {paid === null  && <span style={{ color: "var(--fg-3)", fontSize: 11 }}>—</span>}
                   </td>
                   <td>
-                    <span className={`pill pill--${b.autopay ? "current" : "warn"}`}>
-                      {b.autopay ? "autopay" : "manual"}
-                    </span>
+                    {b.status === "skipped"
+                      ? <span className="pill pill--flat" style={{color:"var(--fg-3)"}}>skipped</span>
+                      : <span className={`pill pill--${b.autopay ? "current" : "warn"}`}>{b.autopay ? "autopay" : "manual"}</span>}
                   </td>
                   <td><div className="table__meta">{b.servicer}</div></td>
                 </tr>

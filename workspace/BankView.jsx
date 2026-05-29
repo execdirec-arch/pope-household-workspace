@@ -28,6 +28,7 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
 
     const dueBills = bills.filter(b => {
       if (b.amount == null) return false;
+      if (b.status === "skipped") return false;
       const day = b.payDay ?? b.dueDay;
       if (day == null) return false;
       if (crossesMonth) {

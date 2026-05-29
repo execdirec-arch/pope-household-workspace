@@ -121,7 +121,7 @@ window.WORKSPACE_DATA = {
   bills: [
     { id: "b1",  name: "Mortgage",       amount: 2975.82, dueDay: 17,   payDay: 31,   autopay: false, status: "active", servicer: "NewRez/ShellPoint", method: "Neighbors FCU", note: "Due 14-17 but paid on the 31st of prior month", txnMatch: "newrez" },
     { id: "b2",  name: "HELOC",          amount: 686.94,  dueDay: 16,   autopay: true,  status: "active", servicer: "Dovenmuehl",        method: "autopay",     txnMatch: "dovenmuehl" },
-    { id: "b3",  name: "Car Payment",    amount: 559.80,  dueDay: 22,   autopay: false, status: "active", servicer: "Neighbors ECM",     method: "Neighbors FCU", txnMatch: "neighbors" },
+    { id: "b3",  name: "Car Payment",    amount: 559.80,  dueDay: 22,   autopay: false, status: "skipped", servicer: "Neighbors ECM",    method: "Neighbors FCU", txnMatch: "neighbors", note: "Skip-a-payment used Jun 2026. $559.80 freed this cycle. Resumes Jul 2026." },
     { id: "b4",  name: "AT&T",           amount: 114.99,  dueDay: 27,   autopay: true,  status: "active", servicer: "AT&T",              method: "autopay", note: "Cell — replaced T-Mobile", txnMatch: "at&t" },
     { id: "b5",  name: "RMA Music",      amount: 344.62,  dueDay: 16,   autopay: true,  status: "active", servicer: "RMA Music School",  method: "PayPal",      txnMatch: "rma" },
     { id: "b6",  name: "Life Ins",       amount: 113.36,  dueDay: 14,   autopay: true,  status: "active", servicer: "State Farm",        method: "autopay",     txnMatch: "state farm" },
@@ -158,9 +158,9 @@ window.WORKSPACE_DATA = {
         id: "grocery",
         label: "Groceries",
         emoji: "🛒",
-        budgetPerWeek: 225,    // $900/mo ÷ 4 weeks. 2 shops per pay cycle = $450/cycle total expected.
+        budgetPerWeek: 450,    // Real spend for family of 8. Non-negotiable floor.
         txnKeywords: ["costco", "walmart", "kroger", "whole foods", "instacart", "uber eats", "doordash", "winn dixie", "rouses", "albertson", "aldi", "trader joe"],
-        note: "2 shops per pay cycle. Uber Eats = Costco delivery. $225/wk × 2 = $450 per cycle.",
+        note: "Family of 8. $450/wk is the real floor, not a target to cut. Uber Eats = Costco delivery.",
       },
       {
         id: "gas",
