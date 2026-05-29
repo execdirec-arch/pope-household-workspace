@@ -1,5 +1,5 @@
 // Cross-device state sync via Vercel Blob backend
-const SYNC_KEYS = ["phw.milestones", "phw.projectLogs", "phw.disc", "phw.paidCards", "phw.doneIds"];
+const SYNC_KEYS = ["phw.milestones", "phw.projectLogs", "phw.disc", "phw.paidCards", "phw.doneIds", "phw.overrides"];
 
 window.StateSync = {
   async load(email) {

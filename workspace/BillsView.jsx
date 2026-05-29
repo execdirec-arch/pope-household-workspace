@@ -1,11 +1,54 @@
 /* BILLS view — bills due soon + full recurring bill list with live paid status */
 function BillsView({ data, bankData }) {
+  const { useState, useRef } = React;
   const bills = data.bills || [];
+
+  const [overrides, setOverridesState] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("phw.overrides") || "{}"); } catch { return {}; }
+  });
+  function setOverride(key, val) {
+    setOverridesState(prev => {
+      const next = { ...prev };
+      if (val === null) delete next[key]; else next[key] = val;
+      localStorage.setItem("phw.overrides", JSON.stringify(next));
+      return next;
+    });
+  }
+
+  function getAmount(b) { return overrides[`bill:${b.name}:amount`] ?? b.amount; }
+  function getDueDay(b) { return overrides[`bill:${b.name}:dueDay`] ?? (b.payDay ?? b.dueDay); }
+
+  function Editable({ value, onSave, display, inputWidth = 70 }) {
+    const [editing, setEditing] = useState(false);
+    const [draft, setDraft] = useState("");
+    if (editing) return (
+      <input
+        autoFocus
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+        onBlur={() => { onSave(draft); setEditing(false); }}
+        onKeyDown={e => {
+          if (e.key === "Enter") { onSave(draft); setEditing(false); }
+          if (e.key === "Escape") setEditing(false);
+        }}
+        style={{ width: inputWidth, fontSize: "inherit", fontFamily: "var(--font-mono, monospace)", padding: "1px 4px", border: "1px solid var(--accent-blue, #3b82f6)", borderRadius: 3, background: "var(--paper)" }}
+      />
+    );
+    return (
+      <span
+        onClick={() => { setDraft(String(value ?? "")); setEditing(true); }}
+        title="Click to edit"
+        style={{ cursor: "pointer", borderBottom: "1px dashed var(--fg-3)", paddingBottom: 1 }}
+      >
+        {display}
+      </span>
+    );
+  }
+
   const dueSoon = bills.filter(b => b.status === "due-soon");
   const upcoming = bills.filter(b => b.status === "upcoming");
-  const monthlyFixed = bills.reduce((s, b) => s + (b.amount || 0), 0);
+  const monthlyFixed = bills.reduce((s, b) => s + (getAmount(b) || 0), 0);
 
-  // Build a flat list of all transactions from the last ~35 days
   const allTxns = [];
   if (bankData?.accounts) {
     const cutoff = new Date();
@@ -19,13 +62,13 @@ function BillsView({ data, bankData }) {
   }
 
   function isPaid(bill) {
-    if (!bill.txnMatch || !allTxns.length) return null; // null = unknown
+    if (!bill.txnMatch || !allTxns.length) return null;
     const key = bill.txnMatch.toLowerCase();
+    const amt = getAmount(bill);
     return allTxns.some(tx => {
       const desc = (tx.description || "").toLowerCase();
-      const amt = Math.abs(Number(tx.amount));
-      const amtMatch = Math.abs(amt - bill.amount) < 2;
-      return desc.includes(key) && amtMatch;
+      const txAmt = Math.abs(Number(tx.amount));
+      return desc.includes(key) && Math.abs(txAmt - amt) < 2;
     });
   }
 
@@ -50,7 +93,6 @@ function BillsView({ data, bankData }) {
         </div>
       </div>
 
-      {/* Due soon */}
       {dueSoon.length > 0 && (
         <>
           <div className="section-header">
@@ -58,12 +100,11 @@ function BillsView({ data, bankData }) {
             <div className="section-header__meta">{dueSoon.length} bills</div>
           </div>
           <div className="stack" style={{ marginBottom: "var(--section-pad)" }}>
-            {dueSoon.map(b => <BillRow key={b.id} bill={b} urgent paid={isPaid(b)} />)}
+            {dueSoon.map(b => <BillRow key={b.id} bill={b} urgent paid={isPaid(b)} amount={getAmount(b)} dueDay={getDueDay(b)} />)}
           </div>
         </>
       )}
 
-      {/* Upcoming */}
       {upcoming.length > 0 && (
         <>
           <div className="section-header">
@@ -71,15 +112,14 @@ function BillsView({ data, bankData }) {
             <div className="section-header__meta">{upcoming.length} bills</div>
           </div>
           <div className="stack" style={{ marginBottom: "var(--section-pad)" }}>
-            {upcoming.map(b => <BillRow key={b.id} bill={b} paid={isPaid(b)} />)}
+            {upcoming.map(b => <BillRow key={b.id} bill={b} paid={isPaid(b)} amount={getAmount(b)} dueDay={getDueDay(b)} />)}
           </div>
         </>
       )}
 
-      {/* All recurring */}
       <div className="section-header">
         <h2 className="section-header__title">All recurring bills</h2>
-        <div className="section-header__meta">{bills.length} total · ${Math.round(monthlyFixed).toLocaleString()}/mo</div>
+        <div className="section-header__meta">{bills.length} total · ${Math.round(monthlyFixed).toLocaleString()}/mo · click amount or due day to edit</div>
       </div>
       <div className="card" style={{ padding: 0 }}>
         <table className="table">
@@ -96,11 +136,26 @@ function BillsView({ data, bankData }) {
           <tbody>
             {bills.map(b => {
               const paid = isPaid(b);
+              const amt = getAmount(b);
+              const due = getDueDay(b);
               return (
                 <tr key={b.id} style={paid ? { background: "rgba(34,197,94,0.06)" } : {}}>
                   <td><div className="table__name">{b.name}</div></td>
-                  <td className="mono">{b.amount != null ? "$" + b.amount.toFixed(2) : "—"}</td>
-                  <td className="mono">{b.payDay ?? b.dueDay ?? "—"}</td>
+                  <td className="mono">
+                    <Editable
+                      value={amt}
+                      display={amt != null ? "$" + Number(amt).toFixed(2) : "—"}
+                      onSave={v => { const n = parseFloat(v.replace(/[$,]/g, "")); setOverride(`bill:${b.name}:amount`, isNaN(n) ? null : n); }}
+                    />
+                  </td>
+                  <td className="mono">
+                    <Editable
+                      value={due}
+                      display={due ?? "—"}
+                      onSave={v => { const n = parseInt(v, 10); setOverride(`bill:${b.name}:dueDay`, isNaN(n) ? null : n); }}
+                      inputWidth={40}
+                    />
+                  </td>
                   <td style={{ textAlign: "center" }}>
                     {paid === true  && <span className="pill pill--current" style={{ background: "#22c55e", color: "#fff", fontWeight: 700 }}>Paid</span>}
                     {paid === false && <span className="pill pill--warn">Pending</span>}
@@ -108,7 +163,7 @@ function BillsView({ data, bankData }) {
                   </td>
                   <td>
                     {b.status === "skipped"
-                      ? <span className="pill pill--flat" style={{color:"var(--fg-3)"}}>skipped</span>
+                      ? <span className="pill pill--flat" style={{ color: "var(--fg-3)" }}>skipped</span>
                       : <span className={`pill pill--${b.autopay ? "current" : "warn"}`}>{b.autopay ? "autopay" : "manual"}</span>}
                   </td>
                   <td><div className="table__meta">{b.servicer}</div></td>
@@ -130,7 +185,7 @@ function BillsView({ data, bankData }) {
   );
 }
 
-function BillRow({ bill, urgent, paid }) {
+function BillRow({ bill, urgent, paid, amount, dueDay }) {
   return (
     <div
       className={`card ${urgent && paid !== true ? "card--accent-tomato" : ""}`}
@@ -145,9 +200,9 @@ function BillRow({ bill, urgent, paid }) {
       </div>
       <div style={{ textAlign: "right" }}>
         <div style={{ fontFamily: "var(--font-headline)", fontSize: 22, color: paid ? "#22c55e" : "var(--ink)", fontWeight: 900 }}>
-          ${bill.amount != null ? bill.amount.toFixed(2) : "—"}
+          ${amount != null ? Number(amount).toFixed(2) : "—"}
         </div>
-        <div className="table__meta">Due {bill.payDay ?? bill.dueDay ?? "—"}</div>
+        <div className="table__meta">Due {dueDay ?? "—"}</div>
       </div>
       {paid === true
         ? <span className="pill pill--current" style={{ background: "#22c55e", color: "#fff", fontWeight: 700, minWidth: 60, textAlign: "center" }}>Paid ✓</span>

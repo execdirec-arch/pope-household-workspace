@@ -2,7 +2,7 @@
 const { put, list } = require("@vercel/blob");
 
 const ALLOWED = ["pope7446@gmail.com", "olivercpope@gmail.com"];
-const SYNC_KEYS = ["phw.milestones", "phw.projectLogs", "phw.disc", "phw.paidCards", "phw.doneIds"];
+const SYNC_KEYS = ["phw.milestones", "phw.projectLogs", "phw.disc", "phw.paidCards", "phw.doneIds", "phw.overrides"];
 
 function emailToPath(email) {
   return "state/" + email.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".json";
