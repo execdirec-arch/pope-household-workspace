@@ -84,6 +84,6 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({ accounts: enriched, fetchedAt: new Date().toISOString() });
   } catch (e) {
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: e.message, stack: e.stack, code: e.code });
   }
 };
