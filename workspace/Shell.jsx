@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { id: "today",    label: "Today",    icon: "today",   count: null,                                                                          section: "Daily" },
   { id: "inbox",    label: "Inbox",    icon: "inbox",   count: (d) => d.inbox.filter(i => ["action","rapid","chase"].includes(i.priority)).length, section: "Daily" },
   { id: "ask",      label: "Ask",      icon: "message", count: null,                                                                          section: "Daily" },
+  { id: "bank",     label: "Bank",     icon: "fund",    count: null,                                                                          section: "Money" },
   { id: "bills",    label: "Bills",    icon: "fund",    count: (d) => (d.bills || []).filter(b => b.status === "due-soon").length,            section: "Money" },
   { id: "billmap",  label: "Bill Map", icon: "clock",   count: null,                                                                          section: "Money" },
   { id: "debt",     label: "Debt",     icon: "flag",    count: null,                                                                          section: "Money" },
