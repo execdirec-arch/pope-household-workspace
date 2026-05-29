@@ -43,8 +43,20 @@ module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   const token = process.env.TELLER_TOKEN;
-  if (!token || !process.env.TELLER_CERT || !process.env.TELLER_KEY) {
-    return res.status(503).json({ error: "Teller credentials not configured" });
+  const cert = process.env.TELLER_CERT;
+  const key = process.env.TELLER_KEY;
+
+  // Debug mode — hit /api/bank?debug=1 to check env var status without calling Teller
+  if (req.query && req.query.debug) {
+    return res.status(200).json({
+      token: token ? `set (${token.slice(0, 12)}...)` : "MISSING",
+      cert: cert ? `set (${cert.length} chars)` : "MISSING",
+      key: key ? `set (${key.length} chars)` : "MISSING",
+    });
+  }
+
+  if (!token || !cert || !key) {
+    return res.status(503).json({ error: "Teller credentials not configured", token: !!token, cert: !!cert, key: !!key });
   }
 
   try {
