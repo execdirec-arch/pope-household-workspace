@@ -67,6 +67,14 @@ function App() {
     rootName: null, dailyDate: null, daysAgo: null, error: null, pendingHandle: null,
   });
   const [data, setData] = useState(window.WORKSPACE_DATA);
+  const [bankData, setBankData] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/bank")
+      .then(r => r.ok ? r.json() : null)
+      .then(j => { if (j && !j.error) setBankData(j); })
+      .catch(() => {});
+  }, []);
 
   function toggleTodo(id) {
     const s = new Set(doneIdsArr);
@@ -144,9 +152,9 @@ function App() {
           {view === "today"  && <ErrorBoundary view="Today"><TodayView    data={data} doneIds={doneIds} toggleTodo={toggleTodo} onSetFocus={onSetFocus} /></ErrorBoundary>}
           {view === "inbox"  && <ErrorBoundary view="Inbox"><InboxView    data={data} /></ErrorBoundary>}
           {view === "ask"    && <ErrorBoundary view="Ask"><AskView        data={data} /></ErrorBoundary>}
-          {view === "bank"    && <ErrorBoundary view="Bank"><BankView         data={data} /></ErrorBoundary>}
-          {view === "bills"   && <ErrorBoundary view="Bills"><BillsView       data={data} /></ErrorBoundary>}
-          {view === "billmap" && <ErrorBoundary view="BillMap"><BillCalendarView data={data} /></ErrorBoundary>}
+          {view === "bank"    && <ErrorBoundary view="Bank"><BankView         data={data} bankData={bankData} onBankData={setBankData} /></ErrorBoundary>}
+          {view === "bills"   && <ErrorBoundary view="Bills"><BillsView       data={data} bankData={bankData} /></ErrorBoundary>}
+          {view === "billmap" && <ErrorBoundary view="BillMap"><BillCalendarView data={data} bankData={bankData} /></ErrorBoundary>}
           {view === "debt"    && <ErrorBoundary view="Debt"><DebtView        data={data} /></ErrorBoundary>}
           {view === "wips"   && <ErrorBoundary view="Projects"><ProjectsView data={data} onSetFocus={onSetFocus} /></ErrorBoundary>}
           {view === "family" && <ErrorBoundary view="Family"><FamilyView  data={data} /></ErrorBoundary>}

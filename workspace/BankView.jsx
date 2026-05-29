@@ -1,15 +1,51 @@
 /* BANK view — live Wells Fargo balances + recent transactions via Teller */
-function BankView({ data }) {
+function BankView({ data, bankData: bankDataProp, onBankData }) {
   const { useState, useEffect } = React;
-  const [bankData, setBankData] = useState(null);
-  const [status, setStatus] = useState("idle"); // idle | loading | ok | error
+  const [bankData, setBankData] = useState(bankDataProp || null);
+  const [status, setStatus] = useState(bankDataProp ? "ok" : "idle");
   const [error, setError] = useState(null);
 
   const bills = data.bills || [];
-  const totalMonthlyBills = bills.reduce((s, b) => s + b.amount, 0);
+
+  function getWindowCoverage(checkingBalance) {
+    const payDates = (data.paySchedule?.dates || [])
+      .map(s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); })
+      .sort((a,b) => a-b);
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    // Next paycheck strictly after today
+    const nextPay = payDates.find(d => d > today);
+    if (!nextPay) return null;
+
+    // Window: today → nextPay (exclusive)
+    const startDay = today.getDate();
+    const startMonth = today.getMonth();
+    const endDay = nextPay.getDate();
+    const endMonth = nextPay.getMonth();
+    const crossesMonth = endMonth !== startMonth;
+
+    const dueBills = bills.filter(b => {
+      if (b.amount == null) return false;
+      const day = b.payDay ?? b.dueDay;
+      if (day == null) return false;
+      if (crossesMonth) {
+        return day >= startDay || day <= endDay;
+      } else {
+        return day >= startDay && day <= endDay;
+      }
+    });
+
+    const total = dueBills.reduce((s, b) => s + b.amount, 0);
+    const covered = checkingBalance >= total;
+    const cushion = checkingBalance - total;
+
+    return { dueBills, total, nextPay, covered, cushion };
+  }
 
   useEffect(() => {
-    fetchBank();
+    if (!bankDataProp) fetchBank();
   }, []);
 
   async function fetchBank() {
@@ -20,6 +56,7 @@ function BankView({ data }) {
       const json = await res.json();
       if (json.error) throw new Error(json.error);
       setBankData(json);
+      if (onBankData) onBankData(json);
       setStatus("ok");
     } catch (e) {
       setError(e.message);
@@ -42,7 +79,7 @@ function BankView({ data }) {
     ? Number(checking.balance.available)
     : checking?.balance?.ledger != null ? Number(checking.balance.ledger) : null;
 
-  const billCoverage = checkingBalance != null ? checkingBalance / totalMonthlyBills : null;
+  const windowCov = checkingBalance != null ? getWindowCoverage(checkingBalance) : null;
 
   return (
     <div>
@@ -103,16 +140,29 @@ function BankView({ data }) {
               );
             })}
 
-            {/* Bills coverage card */}
-            {checkingBalance != null && (
-              <div className="card" style={{ borderTop: `3px solid ${billCoverage >= 1 ? "#22c55e" : billCoverage >= 0.5 ? "#f59e0b" : "#ef4444"}` }}>
-                <div className="card__eyebrow"><span className="card__eyebrow-dot" />Bill coverage</div>
-                <div style={{ fontSize: 13, color: "var(--fg-2)", marginBottom: 4 }}>Checking vs. monthly bills</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "var(--ink)", lineHeight: 1 }}>
-                  {billCoverage != null ? (billCoverage * 100).toFixed(0) + "%" : "—"}
+            {/* Window coverage card */}
+            {windowCov && (
+              <div className="card" style={{ borderTop: `3px solid ${windowCov.covered ? "#22c55e" : "#ef4444"}`, gridColumn: "span 2" }}>
+                <div className="card__eyebrow"><span className="card__eyebrow-dot" />Next window</div>
+                <div style={{ fontSize: 13, color: "var(--fg-2)", marginBottom: 6 }}>
+                  Bills due before {windowCov.nextPay.toLocaleDateString("en-US", { month: "short", day: "numeric" })} paycheck
                 </div>
-                <div style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 4 }}>
-                  {fmt(checkingBalance)} available · {fmt(totalMonthlyBills)}/mo bills
+                <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: windowCov.covered ? "#22c55e" : "#ef4444", lineHeight: 1 }}>
+                    {fmt(windowCov.total)}
+                  </div>
+                  <div style={{ fontSize: 13, color: "var(--fg-2)" }}>
+                    {windowCov.covered
+                      ? `✓ covered · ${fmt(windowCov.cushion)} cushion`
+                      : `⚠ short by ${fmt(Math.abs(windowCov.cushion))}`}
+                  </div>
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 10px" }}>
+                  {windowCov.dueBills.map(b => (
+                    <span key={b.id} style={{ fontSize: 11, color: "var(--fg-3)" }}>
+                      {b.name} {fmt(b.amount)} · {b.payDay ?? b.dueDay}
+                    </span>
+                  ))}
                 </div>
               </div>
             )}

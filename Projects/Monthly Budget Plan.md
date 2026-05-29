@@ -30,7 +30,8 @@ Next Action: Review with Oliver on 2026-06-07. Set variable category caps and co
 |---|---|---|---|---|
 | 2 | Electric | $321.00 | Autopay | Entergy |
 | 9 | Netflix | $27.61 | Autopay | |
-| 10 | Affirm/Anna | $58.81 | Autopay | Laptop payoff |
+| 10 | Affirm/Anna | $58.81 | Autopay | Laptop payoff — 13 payments remaining (done Jun 2027) |
+| TBD | Affirm/Oliver | $152.94 | Autopay | ~12 months remaining — confirm payoff date with Oliver |
 | 12 | Hulu | $12.00 | Autopay | |
 | 13 | Internet | $100.00 | Autopay | AT&T |
 | 14 | Life Insurance | $113.36 | Autopay | State Farm |
@@ -165,3 +166,5 @@ Until APRs are confirmed, target Amex (over-limit at 143% utilization, almost ce
 ## Updates
 
 **2026-05-29:** First version built from live Wells Fargo data. Real income confirmed at $5,782.90/cycle. Key finding: Cycle A is structurally over-budget on its own -- needs a carried buffer. Variable budget is $1,837/mo after all fixed expenses and debt service.
+
+**2026-05-29 (update):** Oliver's Affirm confirmed at $152.94/mo (~12 months remaining). APRs confirmed for 12 of 14 cards. Avalanche target: First Premier (36%), then Capital One 4405 (30.24%), Credit One 1001 (29.65%), etc. Disney Chase and Amex APRs still pending.

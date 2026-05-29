@@ -1,11 +1,33 @@
-/* BILLS view — bills due soon + full recurring bill list. */
-function BillsView({ data }) {
+/* BILLS view — bills due soon + full recurring bill list with live paid status */
+function BillsView({ data, bankData }) {
   const bills = data.bills || [];
   const dueSoon = bills.filter(b => b.status === "due-soon");
   const upcoming = bills.filter(b => b.status === "upcoming");
-  const active = bills.filter(b => b.status === "active");
-
   const monthlyFixed = bills.reduce((s, b) => s + (b.amount || 0), 0);
+
+  // Build a flat list of all transactions from the last ~35 days
+  const allTxns = [];
+  if (bankData?.accounts) {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 35);
+    for (const acct of bankData.accounts) {
+      for (const tx of (acct.transactions || [])) {
+        const d = new Date(tx.date);
+        if (d >= cutoff) allTxns.push(tx);
+      }
+    }
+  }
+
+  function isPaid(bill) {
+    if (!bill.txnMatch || !allTxns.length) return null; // null = unknown
+    const key = bill.txnMatch.toLowerCase();
+    return allTxns.some(tx => {
+      const desc = (tx.description || "").toLowerCase();
+      const amt = Math.abs(Number(tx.amount));
+      const amtMatch = Math.abs(amt - bill.amount) < 2;
+      return desc.includes(key) && amtMatch;
+    });
+  }
 
   return (
     <div>
@@ -16,6 +38,7 @@ function BillsView({ data }) {
             {dueSoon.length > 0
               ? `${dueSoon.length} bill${dueSoon.length > 1 ? "s" : ""} due this week. Don't let them slip.`
               : "No bills due in the next 7 days."}
+            {!bankData && <span style={{ marginLeft: 8, color: "var(--fg-3)", fontSize: 12 }}>· connect bank for paid status</span>}
           </p>
         </div>
         <div>
@@ -34,8 +57,8 @@ function BillsView({ data }) {
             <h2 className="section-header__title">Due this week</h2>
             <div className="section-header__meta">{dueSoon.length} bills</div>
           </div>
-          <div className="stack" style={{ marginBottom: 'var(--section-pad)' }}>
-            {dueSoon.map(b => <BillRow key={b.id} bill={b} urgent />)}
+          <div className="stack" style={{ marginBottom: "var(--section-pad)" }}>
+            {dueSoon.map(b => <BillRow key={b.id} bill={b} urgent paid={isPaid(b)} />)}
           </div>
         </>
       )}
@@ -47,8 +70,8 @@ function BillsView({ data }) {
             <h2 className="section-header__title">Upcoming (7–14 days)</h2>
             <div className="section-header__meta">{upcoming.length} bills</div>
           </div>
-          <div className="stack" style={{ marginBottom: 'var(--section-pad)' }}>
-            {upcoming.map(b => <BillRow key={b.id} bill={b} />)}
+          <div className="stack" style={{ marginBottom: "var(--section-pad)" }}>
+            {upcoming.map(b => <BillRow key={b.id} bill={b} paid={isPaid(b)} />)}
           </div>
         </>
       )}
@@ -65,57 +88,71 @@ function BillsView({ data }) {
               <th>Bill</th>
               <th>Amount</th>
               <th>Due</th>
+              <th style={{ textAlign: "center" }}>Status</th>
               <th>Autopay</th>
               <th>Servicer</th>
-              <th>Method</th>
             </tr>
           </thead>
           <tbody>
-            {bills.map(b => (
-              <tr key={b.id}>
-                <td><div className="table__name">{b.name}</div></td>
-                <td className="mono">${b.amount.toFixed(2)}</td>
-                <td className="mono">{b.dueDate}</td>
-                <td>
-                  <span className={`pill pill--${b.autopay ? 'current' : 'warn'}`}>
-                    {b.autopay ? "autopay" : "manual"}
-                  </span>
-                </td>
-                <td><div className="table__meta">{b.servicer}</div></td>
-                <td><div className="table__meta">{b.method}</div></td>
-              </tr>
-            ))}
+            {bills.map(b => {
+              const paid = isPaid(b);
+              return (
+                <tr key={b.id} style={paid ? { background: "rgba(34,197,94,0.06)" } : {}}>
+                  <td><div className="table__name">{b.name}</div></td>
+                  <td className="mono">{b.amount != null ? "$" + b.amount.toFixed(2) : "—"}</td>
+                  <td className="mono">{b.payDay ?? b.dueDay ?? "—"}</td>
+                  <td style={{ textAlign: "center" }}>
+                    {paid === true  && <span className="pill pill--current" style={{ background: "#22c55e", color: "#fff", fontWeight: 700 }}>Paid</span>}
+                    {paid === false && <span className="pill pill--warn">Pending</span>}
+                    {paid === null  && <span style={{ color: "var(--fg-3)", fontSize: 11 }}>—</span>}
+                  </td>
+                  <td>
+                    <span className={`pill pill--${b.autopay ? "current" : "warn"}`}>
+                      {b.autopay ? "autopay" : "manual"}
+                    </span>
+                  </td>
+                  <td><div className="table__meta">{b.servicer}</div></td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
-      <div className="card card--tinted" style={{ marginTop: 'var(--card-gap)' }}>
+      <div className="card card--tinted" style={{ marginTop: "var(--card-gap)" }}>
         <div className="card__eyebrow"><span className="card__eyebrow-dot" />Note</div>
         <p className="card__body" style={{ margin: 0 }}>
           Bills marked <strong>manual</strong> are the ones that slip. Mortgage and HELOC both hit June 1 and are manual. Confirm payment or set up autopay.
-          Bills with <strong>[TBD]</strong> due dates need confirmation — update the vault page once you know.
+          Paid status pulls from live bank transactions — green means a matching charge appeared in the last 35 days.
         </p>
       </div>
     </div>
   );
 }
 
-function BillRow({ bill, urgent }) {
+function BillRow({ bill, urgent, paid }) {
   return (
-    <div className={`card ${urgent ? 'card--accent-tomato' : ''}`} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+    <div
+      className={`card ${urgent && paid !== true ? "card--accent-tomato" : ""}`}
+      style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16,
+        ...(paid ? { borderLeft: "3px solid #22c55e", background: "rgba(34,197,94,0.05)" } : {}),
+      }}
+    >
       <div>
         <div className="table__name">{bill.name}</div>
         <div className="table__meta">{bill.servicer} · {bill.method}</div>
       </div>
       <div style={{ textAlign: "right" }}>
-        <div style={{ fontFamily: "var(--font-headline)", fontSize: 22, color: "var(--ink)", fontWeight: 900 }}>
-          ${bill.amount.toFixed(2)}
+        <div style={{ fontFamily: "var(--font-headline)", fontSize: 22, color: paid ? "#22c55e" : "var(--ink)", fontWeight: 900 }}>
+          ${bill.amount != null ? bill.amount.toFixed(2) : "—"}
         </div>
-        <div className="table__meta">Due {bill.dueDate}</div>
+        <div className="table__meta">Due {bill.payDay ?? bill.dueDay ?? "—"}</div>
       </div>
-      <span className={`pill pill--${bill.autopay ? 'current' : 'urgent'}`}>
-        {bill.autopay ? "autopay" : "MANUAL"}
-      </span>
+      {paid === true
+        ? <span className="pill pill--current" style={{ background: "#22c55e", color: "#fff", fontWeight: 700, minWidth: 60, textAlign: "center" }}>Paid ✓</span>
+        : <span className={`pill pill--${bill.autopay ? "current" : "urgent"}`}>{bill.autopay ? "autopay" : "MANUAL"}</span>
+      }
     </div>
   );
 }
