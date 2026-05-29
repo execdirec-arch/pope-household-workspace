@@ -8,12 +8,16 @@
 <link rel="stylesheet" href="colors_and_type.css" />
 <link rel="stylesheet" href="workspace/app.css" />
 
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 <script src="vendor/react.production.min.js"></script>
 <script src="vendor/react-dom.production.min.js"></script>
 <script src="vendor/babel.min.js"></script>
 
+<script src="workspace/config.js"></script>
 <script src="workspace/data.js"></script>
 <script src="workspace/vault.js"></script>
+<script type="text/babel" src="workspace/LoginView.jsx"></script>
 <script type="text/babel" src="workspace/Icons.jsx"></script>
 <script type="text/babel" src="workspace/ErrorBoundary.jsx"></script>
 <script type="text/babel" src="workspace/Shell.jsx"></script>
@@ -59,6 +63,27 @@ function useLocalStorage(key, initial) {
 }
 
 function App() {
+  const [session, setSession] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem("phw.session") || "null"); } catch { return null; }
+  });
+
+  function handleLogin(user) {
+    localStorage.setItem("phw.session", JSON.stringify(user));
+    setSession(user);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("phw.session");
+    if (window.google?.accounts?.id) window.google.accounts.id.disableAutoSelect();
+    setSession(null);
+  }
+
+  if (!session) return <LoginView onLogin={handleLogin} />;
+
+  return <AuthenticatedApp session={session} onLogout={handleLogout} />;
+}
+
+function AuthenticatedApp({ session, onLogout }) {
   const [view, setView] = useLocalStorage("phw.view", "today");
   const [doneIdsArr, setDoneIdsArr] = useLocalStorage("phw.doneIds", []);
   const doneIds = new Set(doneIdsArr);
@@ -145,7 +170,7 @@ function App() {
 
   return (
     <div className="app">
-      <Nav view={view} setView={setView} data={data} focus={focus} goToFocus={onResumeFocus} />
+      <Nav view={view} setView={setView} data={data} focus={focus} goToFocus={onResumeFocus} session={session} onLogout={onLogout} />
       <div className="main">
         <Topbar data={data} vaultState={vaultState} onConnect={connectVault} onReauthorize={reauthorize} onRefresh={loadFromVault} onDisconnect={disconnectVault} />
         <FocusStrip focus={focus} onResume={onResumeFocus} onClear={onClearFocus} onSetFocus={onSetFocus} />

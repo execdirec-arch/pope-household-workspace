@@ -1,13 +1,5 @@
 /* Shell: nav rail + main column with topbar + focus strip + view slot. */
 
-window.resetDemoState = function () {
-  try {
-    Object.keys(localStorage)
-      .filter(k => k.startsWith("phw."))
-      .forEach(k => localStorage.removeItem(k));
-  } catch (e) {}
-  window.location.href = window.location.pathname;
-};
 
 const NAV_ITEMS = [
   { id: "today",    label: "Today",    icon: "today",   count: null,                                                                          section: "Daily" },
@@ -20,9 +12,11 @@ const NAV_ITEMS = [
   { id: "family",   label: "Family",   icon: "clock",   count: null,                                                                          section: "Household" },
 ];
 
-function Nav({ view, setView, data, focus, goToFocus }) {
+function Nav({ view, setView, data, focus, goToFocus, session, onLogout }) {
   const sections = ["Daily", "Money", "Household"];
-  const initials = ((data.user.firstName || "")[0] || "") + ((data.user.lastName || "")[0] || "");
+  const initials = session
+    ? (session.name || "").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()
+    : ((data.user.firstName || "")[0] || "") + ((data.user.lastName || "")[0] || "");
 
   return (
     <nav className="nav">
@@ -52,12 +46,26 @@ function Nav({ view, setView, data, focus, goToFocus }) {
 
       <div className="nav__footer">
         <div className="nav__user">
-          <div className="nav__user-avatar">{initials.toUpperCase()}</div>
-          <div>
-            <div className="nav__user-name">{data.user.firstName} {data.user.lastName}</div>
-            <div className="muted" style={{ fontSize: 10 }}>{data.user.role}</div>
+          {session?.picture
+            ? <img src={session.picture} referrerPolicy="no-referrer" style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0 }} />
+            : <div className="nav__user-avatar">{initials}</div>}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="nav__user-name" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {session ? session.name : `${data.user.firstName} ${data.user.lastName}`}
+            </div>
+            <div className="muted" style={{ fontSize: 10, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {session ? session.email : data.user.role}
+            </div>
           </div>
         </div>
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            style={{ marginTop: 8, width: "100%", padding: "5px 0", fontSize: 11, background: "transparent", border: "1px solid var(--border)", borderRadius: 5, cursor: "pointer", color: "var(--fg-3)" }}
+          >
+            Sign out
+          </button>
+        )}
       </div>
     </nav>
   );
@@ -96,7 +104,6 @@ function Topbar({ data, vaultState, onConnect, onReauthorize, onRefresh, onDisco
             </div>
           </div>
         ))}
-        <ResetDemoButton />
       </div>
     </div>
   );
@@ -188,29 +195,4 @@ function FocusStrip({ focus, onResume, onClear, onSetFocus }) {
   );
 }
 
-function ResetDemoButton() {
-  const [armed, setArmed] = React.useState(false);
-  React.useEffect(() => {
-    if (!armed) return;
-    const t = setTimeout(() => setArmed(false), 3500);
-    return () => clearTimeout(t);
-  }, [armed]);
-  if (armed) {
-    return (
-      <div className="nav__reset nav__reset--armed">
-        <div className="nav__reset-label">Reset?</div>
-        <div className="nav__reset-actions">
-          <button className="nav__reset-confirm" onClick={() => window.resetDemoState()}>Yes</button>
-          <button className="nav__reset-cancel" onClick={() => setArmed(false)}>No</button>
-        </div>
-      </div>
-    );
-  }
-  return (
-    <button className="nav__reset" onClick={() => setArmed(true)} title="Reset demo state">
-      ↻ Reset demo
-    </button>
-  );
-}
-
-Object.assign(window, { Nav, Topbar, FocusStrip, ResetDemoButton });
+Object.assign(window, { Nav, Topbar, FocusStrip });
