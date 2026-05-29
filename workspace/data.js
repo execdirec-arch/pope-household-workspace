@@ -125,7 +125,7 @@ window.WORKSPACE_DATA = {
     { id: "b4",  name: "AT&T",           amount: 114.99,  dueDay: 27,   autopay: true,  status: "active", servicer: "AT&T",              method: "autopay", note: "Cell — replaced T-Mobile", txnMatch: "at&t" },
     { id: "b5",  name: "RMA Music",      amount: 344.62,  dueDay: 16,   autopay: true,  status: "active", servicer: "RMA Music School",  method: "PayPal",      txnMatch: "rma" },
     { id: "b6",  name: "Life Ins",       amount: 113.36,  dueDay: 14,   autopay: true,  status: "active", servicer: "State Farm",        method: "autopay",     txnMatch: "state farm" },
-    { id: "b7",  name: "Lawn",           amount: 195.00,  dueDay: 30,   autopay: false, status: "active", servicer: "[TBD]",             method: "check/cash" },
+    { id: "b7",  name: "Lawn",           amount: 300.00,  dueDay: 30,   autopay: false, status: "active", servicer: "[TBD]",             method: "check/cash", note: "Summer rate $300. Confirm if it drops in fall/winter." },
     { id: "b8",  name: "Netflix",        amount: 27.61,   dueDay: 9,    autopay: true,  status: "active", servicer: "Netflix",           method: "credit card", txnMatch: "netflix" },
     { id: "b9",  name: "Kitty Poo",      amount: 60.88,   dueDay: 18,   autopay: true,  status: "active", servicer: "Kitty Poo Club",    method: "autopay",     txnMatch: "kitty poo" },
     { id: "b10", name: "Xbox",           amount: 24.89,   dueDay: 18,   autopay: true,  status: "active", servicer: "Microsoft",         method: "autopay",     txnMatch: "microsoft" },
