@@ -145,7 +145,7 @@ window.WORKSPACE_DATA = {
     { id: "b24", name: "Spotify",        amount: 24.52,   dueDay: 26,   autopay: true,  status: "active", servicer: "Spotify",           method: "PayPal" },
     { id: "b25", name: "Crunchyroll",    amount: 19.87,   dueDay: 26,   autopay: true,  status: "active", servicer: "Crunchyroll",       method: "PayPal" },
     { id: "b26", name: "Beast Academy",  amount: 15.99,   dueDay: 19,   autopay: true,  status: "active", servicer: "Beast Academy",     method: "autopay" },
-    { id: "b27", name: "Carwash",        amount: 49.99,   dueDay: null, autopay: true,  status: "active", servicer: "Benny's or Whitewater — cancel one", method: "autopay", note: "ACTION: cancel duplicate" },
+    { id: "b27", name: "Benny's Carwash", amount: 49.99,   dueDay: null, autopay: true,  status: "active", servicer: "Benny's",           method: "autopay" },
     { id: "b28", name: "Uber One",       amount: 9.99,    dueDay: 18,   autopay: true,  status: "active", servicer: "Uber",              method: "autopay" },
     { id: "b29", name: "Google MLB",     amount: 4.32,    dueDay: 18,   autopay: true,  status: "active", servicer: "Google",            method: "autopay" },
     { id: "b30", name: "Apple Services", amount: 9.99,    dueDay: 26,   autopay: true,  status: "active", servicer: "Apple",             method: "PayPal" },
