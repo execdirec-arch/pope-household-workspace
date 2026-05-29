@@ -4,9 +4,10 @@ const https = require("https");
 const TELLER_BASE = "https://api.teller.io";
 
 function tellerAgent() {
+  // Env vars stored as raw PEM strings
   return new https.Agent({
-    cert: Buffer.from(process.env.TELLER_CERT, "base64"),
-    key:  Buffer.from(process.env.TELLER_KEY,  "base64"),
+    cert: process.env.TELLER_CERT,
+    key:  process.env.TELLER_KEY,
   });
 }
 
