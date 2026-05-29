@@ -166,7 +166,7 @@ window.WORKSPACE_DATA = {
         id: "gas",
         label: "Gas",
         emoji: "⛽",
-        budgetPerWeek: 38,     // $150/mo ÷ 4 weeks
+        budgetPerWeek: 75,
         txnKeywords: ["shell", "circle k", "chevron", "exxon", "bp ", "murphy", "speedway", "valero", "racetrac"],
         note: "Fuel only. Car wash excluded (separate bill).",
       },
