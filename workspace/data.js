@@ -45,19 +45,19 @@ window.WORKSPACE_DATA = {
 
   todos: {
     development: [
-      { id: "t1", label: "Pull APRs for all 14 credit cards",           urgent: true,  done: false, note: "Needed to set avalanche payoff order. Check each card's current statement." },
-      { id: "t2", label: "Follow up with Henry on attic repair",         urgent: true,  done: false, note: "Claim 01-009-725103. What's the repair timeline? Any docs needed for Progressive?" },
-      { id: "t3", label: "Submit any outstanding docs to Progressive",   urgent: false, done: false, note: "claimdocuments@afics.com · adjuster 866-621-4823" },
+      { id: "t1", label: "Cancel Albert (Mon Jun 2)",                    urgent: true,  done: false, note: "Pending pulls need to clear first. Check Mon Jun 2 and cancel. Recover auto-saved funds." },
+      { id: "t2", label: "Pull APRs for all credit cards",               urgent: true,  done: false, note: "Needed to set avalanche payoff order. Check each card's current statement." },
+      { id: "t3", label: "Follow up with Henry on attic repair",         urgent: true,  done: false, note: "Claim 01-009-725103. Repair timeline? Docs needed for Progressive?" },
     ],
     programs: [
-      { id: "t4", label: "Set monthly fast-food budget cap",             urgent: false, done: false, note: "Communicate to Oliver. Log the number in CONTEXT.md." },
-      { id: "t5", label: "Set up autopay or calendar for mortgage + HELOC", urgent: false, done: false, note: "Both due June 1. These are the ones that slip." },
-      { id: "t6", label: "Run budget leak analysis (first pass)",        urgent: false, done: false, note: "3 months of Expense Tracker data. Flag unknowns and silent price hikes." },
+      { id: "t4", label: "Set $400 Cycle A buffer in checking",          urgent: true,  done: false, note: "Mid-month bill cluster exceeds one paycheck. Keep $400 carry from Cycle B at all times." },
+      { id: "t5", label: "Confirm mortgage + HELOC autopay status",      urgent: true,  done: false, note: "Both manual. Due mid-month. These are the ones that slip." },
+      { id: "t6", label: "Set fast-food vs. grocery delivery budget cap", urgent: false, done: false, note: "Target: $900/mo groceries total (delivery inc.). Separate restaurant line at $200/mo." },
     ],
     grants: [
-      { id: "t7", label: "Gather homeschool curriculum details",         urgent: false, done: false, note: "Need grade level, subjects, and current materials for each kid before building pages." },
-      { id: "t8", label: "Confirm 401K institution and contribution rate", urgent: false, done: false, note: "Add to /Accounts/401K.md" },
-      { id: "t9", label: "Fill in T-Mobile due date and plan details",   urgent: false, done: false, note: "$247.43/mo — how many lines? Due when?" },
+      { id: "t7", label: "Confirm AT&T: does it cover internet too?",    urgent: false, done: false, note: "$114.99 cell confirmed. Is internet a separate AT&T bill or different provider?" },
+      { id: "t8", label: "Confirm lawn rate",                            urgent: false, done: false, note: "Vault says $195, tracker showed $315. What's the current contract?" },
+      { id: "t9", label: "Gather homeschool curriculum details",         urgent: false, done: false, note: "Per-kid vault pages pending. Needed before building homeschool platform." },
     ],
   },
 
@@ -141,7 +141,6 @@ window.WORKSPACE_DATA = {
     { id: "b20", name: "US Law Shield",  amount: 27.80,   dueDay: 18,   autopay: true,  status: "active", servicer: "US Law Shield",     method: "autopay" },
     { id: "b21", name: "Zoom",           amount: 16.49,   dueDay: 18,   autopay: true,  status: "active", servicer: "Zoom",              method: "autopay" },
     { id: "b22", name: "Claude.ai",      amount: 22.30,   dueDay: 18,   autopay: true,  status: "active", servicer: "Anthropic",         method: "autopay" },
-    { id: "b23", name: "ChatGPT",        amount: 22.30,   dueDay: 27,   autopay: true,  status: "active", servicer: "OpenAI",            method: "autopay" },
     { id: "b24", name: "Spotify",        amount: 24.52,   dueDay: 26,   autopay: true,  status: "active", servicer: "Spotify",           method: "PayPal" },
     { id: "b25", name: "Crunchyroll",    amount: 19.87,   dueDay: 26,   autopay: true,  status: "active", servicer: "Crunchyroll",       method: "PayPal" },
     { id: "b26", name: "Beast Academy",  amount: 15.99,   dueDay: 19,   autopay: true,  status: "active", servicer: "Beast Academy",     method: "autopay" },
