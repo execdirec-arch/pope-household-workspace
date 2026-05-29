@@ -121,7 +121,7 @@ window.WORKSPACE_DATA = {
   bills: [
     { id: "b1",  name: "Mortgage",       amount: 2975.82, dueDay: 17,   payDay: 31,   autopay: false, status: "active", servicer: "NewRez/ShellPoint", method: "Neighbors FCU", note: "Due 14-17 but paid on the 31st of prior month", txnMatch: "newrez" },
     { id: "b2",  name: "HELOC",          amount: 686.94,  dueDay: 16,   autopay: true,  status: "active", servicer: "Dovenmuehl",        method: "autopay",     txnMatch: "dovenmuehl" },
-    { id: "b3",  name: "Car Payment",    amount: 559.80,  dueDay: 22,   autopay: false, status: "skipped", servicer: "Neighbors ECM",    method: "Neighbors FCU", txnMatch: "neighbors", note: "Skip-a-payment used Jun 2026. $559.80 freed this cycle. Resumes Jul 2026." },
+    { id: "b3",  name: "Car Payment",    amount: 559.80,  dueDay: 22,   autopay: false, status: "skipped", servicer: "Neighbors ECM",    method: "Neighbors FCU", txnMatch: "neighbors", note: "Skip-a-payment used Jun 2026. $559.80 freed this cycle. Resumes mid-Jul 2026 (around the 22nd)." },
     { id: "b4",  name: "AT&T",           amount: 114.99,  dueDay: 27,   autopay: true,  status: "active", servicer: "AT&T",              method: "autopay", note: "Cell — replaced T-Mobile", txnMatch: "at&t" },
     { id: "b5",  name: "RMA Music",      amount: 344.62,  dueDay: 16,   autopay: true,  status: "active", servicer: "RMA Music School",  method: "PayPal",      txnMatch: "rma" },
     { id: "b6",  name: "Life Ins",       amount: 113.36,  dueDay: 14,   autopay: true,  status: "active", servicer: "State Farm",        method: "autopay",     txnMatch: "state farm" },
