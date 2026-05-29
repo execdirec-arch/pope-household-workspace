@@ -1,8 +1,5 @@
 // Teller bank integration — mTLS proxy for Wells Fargo data
-// Vercel Node.js runtime (not Edge) required for mTLS support
-import https from "https";
-
-export const config = { runtime: "nodejs" };
+const https = require("https");
 
 const TELLER_BASE = "https://api.teller.io";
 
@@ -41,7 +38,7 @@ function tellerGet(path, token) {
   });
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   if (req.method === "OPTIONS") return res.status(200).end();
 
@@ -51,11 +48,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Fetch accounts
     const { status: aStatus, body: accounts } = await tellerGet("/accounts", token);
     if (aStatus !== 200) return res.status(aStatus).json({ error: "Teller accounts error", detail: accounts });
 
-    // For each account, fetch balance + last 90 days of transactions in parallel
     const enriched = await Promise.all(
       accounts.map(async (acct) => {
         const [balRes, txRes] = await Promise.all([
@@ -67,7 +62,7 @@ export default async function handler(req, res) {
           name: acct.name,
           type: acct.type,
           subtype: acct.subtype,
-          institution: acct.institution?.name || "Wells Fargo",
+          institution: (acct.institution && acct.institution.name) || "Wells Fargo",
           status: acct.status,
           balance: balRes.status === 200 ? balRes.body : null,
           transactions: txRes.status === 200 ? txRes.body : [],
@@ -79,4 +74,4 @@ export default async function handler(req, res) {
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
-}
+};
