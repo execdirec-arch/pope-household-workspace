@@ -49,7 +49,6 @@
     const opts = {
       applicationId: APPLICATION_ID,
       environment: "development",
-      products: ["transactions", "balance"],
     };
     if (ENROLLMENT_ID && !params.get("fresh")) opts.enrollmentId = ENROLLMENT_ID;
     const setup = TellerConnect.setup({

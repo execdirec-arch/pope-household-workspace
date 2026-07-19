@@ -36,27 +36,23 @@ window.WORKSPACE_DATA = {
   },
 
   schedule: [
-    { when: "Thu May 28", label: "Follow up with Henry (HR3) on attic repair timeline", who: "Henry 504-232-8827", status: "open", note: "Claim 01-009-725103, Homesite by Progressive" },
-    { when: "Sun Jun 1",  label: "Mortgage due", who: "NewRez/ShellPoint", status: "deadline", note: "$2,975.82 — confirm payment" },
-    { when: "Sun Jun 1",  label: "HELOC due",    who: "Dovenmuehl",        status: "deadline", note: "$686.94" },
-    { when: "Wed Jun 4",  label: "HR3 follow-up — repair timeline", who: "Henry", status: "open", note: "If no update by now, call" },
-    { when: "Sat Jun 7",  label: "Budget + debt review session", who: "Oliver + Lauren", status: "prep", note: "Set payoff order, APRs, fast-food cap" },
+    { when: "Mon Jul 20", label: "Citi/Discover avalanche payment window", who: "Citi", status: "deadline", note: "$850 targeted payment — due day 18 cycle" },
+    { when: "Wed Jul 22", label: "Car payment due", who: "Neighbors ECM", status: "deadline", note: "$559.80 — resumed after June skip-a-payment" },
+    { when: "Mon Jul 27", label: "Affirm (Oliver) due — manual", who: "Affirm", status: "deadline", note: "$152.94 — autopay broken, must pay manually" },
+    { when: "Fri Jul 24", label: "Payday (Oliver)", who: "MasteryPrep", status: "prep", note: "$5,782.90 — Cycle B; set aside Cycle A buffer" },
   ],
 
   todos: {
     development: [
-      { id: "t1", label: "Cancel Albert (Mon Jun 2)",                    urgent: true,  done: false, note: "Pending pulls need to clear first. Check Mon Jun 2 and cancel. Recover auto-saved funds." },
-      { id: "t2", label: "Confirm Disney Chase + Amex actual APRs",      urgent: true,  done: false, note: "All others confirmed. Disney Chase was 0% intro (expired). Amex over-limit — likely highest. Pull current statements." },
-      { id: "t3", label: "Follow up with Henry on attic repair",         urgent: true,  done: false, note: "Claim 01-009-725103. Repair timeline? Docs needed for Progressive?" },
+      { id: "t1", label: "Cancel Albert — still billing",                urgent: true,  done: false, note: "Pulled $51 + $55 in the first week of July. Roughly $100/mo bleeding since June. Cancel in the Albert app, then request recovery of auto-saved funds." },
+      { id: "t3", label: "Follow up with Henry on attic repair",         urgent: false, done: false, note: "Claim 01-009-725103. Last contact May. Repair timeline? Docs needed for Progressive?" },
     ],
     programs: [
       { id: "t4", label: "Set $400 Cycle A buffer in checking",          urgent: true,  done: false, note: "Mid-month bill cluster exceeds one paycheck. Keep $400 carry from Cycle B at all times." },
-      { id: "t5", label: "Confirm mortgage + HELOC autopay status",      urgent: true,  done: false, note: "Both manual. Due mid-month. These are the ones that slip." },
       { id: "t6", label: "Set fast-food vs. grocery delivery budget cap", urgent: false, done: false, note: "Target: $900/mo groceries total (delivery inc.). Separate restaurant line at $200/mo." },
     ],
     grants: [
-      { id: "t7", label: "Confirm AT&T: does it cover internet too?",    urgent: false, done: true,  note: "Confirmed: two separate AT&T bills. Cell $114.99 (day 27), Internet $100 (day 13)." },
-      { id: "t8", label: "Confirm lawn rate",                            urgent: false, done: false, note: "Vault says $195, tracker showed $315. What's the current contract?" },
+      { id: "t2", label: "Confirm Disney Chase + Amex actual APRs",      urgent: false, done: false, note: "12 of 14 confirmed. Disney Chase was 0% intro (expired). Amex over-limit — likely highest." },
       { id: "t9", label: "Gather homeschool curriculum details",         urgent: false, done: false, note: "Per-kid vault pages pending. Needed before building homeschool platform." },
     ],
   },
@@ -64,23 +60,23 @@ window.WORKSPACE_DATA = {
   nudges: [
     {
       tone: "urgent",
-      title: "Mortgage and HELOC both hit June 1 — confirm payment now",
-      body: "These are the exact bills that slip. $2,975.82 (NewRez) and $686.94 (Dovenmuehl) are both due June 1. That's $3,662 in four days. Verify the payment is queued or autopay is active. Don't let them push to end of month.",
+      title: "Albert is still billing — $106 pulled in the first week of July",
+      body: "Flagged for cancellation June 2, never cancelled, still pulling ($51 on Jul 1, $55 on Jul 3). Cancelling it in the app and recovering the auto-saved balance is the single fastest recurring money win available.",
     },
     {
       tone: "major",
-      title: "Avalanche order set — one card still pending",
-      body: "14 of 15 cards ranked. First Premier (36%) is the immediate target. Citi APR is the only unknown — account access blocked during Discover transfer. Once transfer completes, Discover balance will rise and Citi closes. Amex strategy: pay off (29.90%), then use as the household monthly spend card paid in full.",
+      title: "July 1 went clean — mortgage, car, and debt payments all confirmed",
+      body: "Bank data confirms NewRez $2,968.98, Neighbors car payment $559.80 (resumed after the June skip), Citi $406, Chase $550, Amex $200, and First Premier $275 all cleared July 1. The month started handled.",
     },
     {
       tone: "metric",
-      title: "The budget leak analysis will pay for itself fast",
-      body: "The Expense Tracker shows Amazon, Prime Video, Apple, Xbox, Avast, and Microsoft all hitting in the same pay period. Some of these may be duplicating or forgotten. One audit session could free up $50-100/mo that goes straight to debt.",
+      title: "Affirm (Oliver) is the one bill with no safety net",
+      body: "Autopay bounced and it's manual now: $152.94 due the 27th. Until the payment method is fixed in the Affirm app, this is the likeliest bill to slip each month.",
     },
     {
       tone: "people",
-      title: "Attic repair has a hard dependency on insurance",
-      body: "Henry (HR3) can't finish without Progressive settling the claim. Keep the claim number (01-009-725103) and adjuster line (866-621-4823) front of mind. If the claim stalls, the repair stalls. Follow up proactively.",
+      title: "Avalanche unchanged: First Premier first",
+      body: "First Premier (36%) remains the target for every Rehumanize dollar. Citi/Discover transfer status needs a fresh look once the bank feed is current — Discover's balance will have risen and Citi may be closed.",
     },
   ],
 
@@ -121,7 +117,7 @@ window.WORKSPACE_DATA = {
   bills: [
     { id: "b1",  name: "Mortgage",       amount: 2975.82, dueDay: 17,   payDay: 31,   autopay: false, status: "active", servicer: "NewRez/ShellPoint", method: "Neighbors FCU", note: "Due 14-17 but paid on the 31st of prior month", txnMatch: "newrez" },
     { id: "b2",  name: "HELOC",          amount: 686.94,  dueDay: 16,   autopay: true,  status: "active", servicer: "Dovenmuehl",        method: "autopay",     txnMatch: "dovenmuehl" },
-    { id: "b3",  name: "Car Payment",    amount: 559.80,  dueDay: 22,   autopay: false, status: "skipped", servicer: "Neighbors ECM",    method: "Neighbors FCU", txnMatch: "neighbors", note: "Skip-a-payment used Jun 2026. $559.80 freed this cycle. Resumes mid-Jul 2026 (around the 22nd)." },
+    { id: "b3",  name: "Car Payment",    amount: 559.80,  dueDay: 22,   autopay: false, status: "active", servicer: "Neighbors ECM",    method: "Neighbors FCU", txnMatch: "neighbors", note: "Resumed after June skip-a-payment — $559.80 confirmed paid Jul 1." },
     { id: "b4",  name: "AT&T Cell",       amount: 114.99,  dueDay: 27,   autopay: true,  status: "active", servicer: "AT&T",              method: "autopay", note: "Cell phones — replaced T-Mobile", txnMatch: "at&t" },
     { id: "b5",  name: "RMA Music",      amount: 344.62,  dueDay: 16,   autopay: true,  status: "active", servicer: "RMA Music School",  method: "PayPal",      txnMatch: "rma" },
     { id: "b6",  name: "Life Ins",       amount: 113.36,  dueDay: 14,   autopay: true,  status: "active", servicer: "State Farm",        method: "autopay",     txnMatch: "state farm" },
