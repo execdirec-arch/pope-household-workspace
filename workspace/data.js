@@ -368,4 +368,32 @@ window.WORKSPACE_DATA = {
       return { ...c, days };
     })
     .filter((c) => c.days >= 0);
+
+  // Compute bill due-status from the real calendar (views filter on these,
+  // nothing else sets them): due-soon = next 7 days, upcoming = 7-14 days.
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  for (const b of window.WORKSPACE_DATA.bills || []) {
+    if (!b.dueDay || b.status === "skipped") continue;
+    let delta = b.dueDay - now.getDate();
+    if (delta < 0) delta += daysInMonth; // wraps to next month
+    if (delta <= 7) b.status = "due-soon";
+    else if (delta <= 14) b.status = "upcoming";
+    else b.status = "active";
+  }
+
+  // Extend the biweekly pay schedule indefinitely from the last known payday
+  // so Bill Map checkpoints keep working past the hardcoded list.
+  const ps = window.WORKSPACE_DATA.paySchedule;
+  if (ps && ps.frequency === "biweekly" && ps.dates && ps.dates.length) {
+    const last = ps.dates[ps.dates.length - 1];
+    let [y, m, d] = last.split("-").map(Number);
+    let cur = new Date(y, m - 1, d);
+    const horizon = new Date(now.getFullYear(), now.getMonth() + 14, 1);
+    while (cur < horizon) {
+      cur = new Date(cur.getTime() + 14 * 86400000);
+      ps.dates.push(
+        cur.getFullYear() + "-" + String(cur.getMonth() + 1).padStart(2, "0") + "-" + String(cur.getDate()).padStart(2, "0")
+      );
+    }
+  }
 })();

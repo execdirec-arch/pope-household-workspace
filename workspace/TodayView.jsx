@@ -35,8 +35,8 @@ function TodayView({ data, bankData, toggleTodo, doneIds, onSetFocus }) {
       }
       const kws = cat.txnKeywords.map(k => k.toLowerCase());
       const spent = weekTxns
-        .filter(tx => kws.some(k => (tx.description||"").toLowerCase().includes(k)) && Number(tx.amount) > 0)
-        .reduce((s,tx) => s + Number(tx.amount), 0);
+        .filter(tx => kws.some(k => (tx.description||"").toLowerCase().includes(k)) && Number(tx.amount) < 0) // debits are negative in Teller data
+        .reduce((s,tx) => s + Math.abs(Number(tx.amount)), 0);
       return { ...cat, spent, remaining: cat.budgetPerWeek - spent };
     });
   })();

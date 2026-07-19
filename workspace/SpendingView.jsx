@@ -13,14 +13,18 @@ function SpendingView({ data, bankData }) {
 
   // All transactions this week
   const cycleTxns = [];
+  let newestTxnDate = null;
   if (bankData?.accounts) {
     for (const acct of bankData.accounts) {
       for (const tx of (acct.transactions || [])) {
+        if (!newestTxnDate || tx.date > newestTxnDate) newestTxnDate = tx.date;
         const d = new Date(tx.date); d.setHours(0,0,0,0);
         if (d >= weekStart && d < weekEnd) cycleTxns.push(tx);
       }
     }
   }
+  // Feed is stale if the newest bank transaction predates this week
+  const feedStale = bankData && newestTxnDate && new Date(newestTxnDate) < weekStart;
 
   // Manual discretionary entries
   const [discEntries, setDiscEntries] = useState(() => {
@@ -70,9 +74,9 @@ function SpendingView({ data, bankData }) {
     const keywords = cat.txnKeywords.map(k => k.toLowerCase());
     const matched = cycleTxns.filter(tx => {
       const desc = (tx.description || "").toLowerCase();
-      return keywords.some(k => desc.includes(k)) && Number(tx.amount) > 0;
+      return keywords.some(k => desc.includes(k)) && Number(tx.amount) < 0; // debits are negative in Teller data
     });
-    const total = matched.reduce((s, tx) => s + Number(tx.amount), 0);
+    const total = matched.reduce((s, tx) => s + Math.abs(Number(tx.amount)), 0);
     return { total, txns: matched };
   }
 
@@ -93,6 +97,7 @@ function SpendingView({ data, bankData }) {
             {`Week of ${weekStart.toLocaleDateString("en-US", {month:"short",day:"numeric"})} → ${new Date(weekEnd.getTime()-86400000).toLocaleDateString("en-US", {month:"short",day:"numeric"})}`}
             {daysLeft != null && ` · ${daysLeft} day${daysLeft !== 1 ? "s" : ""} left`}
             {!bankData && <span style={{marginLeft:8, color:"var(--fg-3)", fontSize:12}}>· connect bank for auto-tracking</span>}
+            {feedStale && <span style={{marginLeft:8, color:"#f59e0b", fontSize:12}}>· bank data ends {newestTxnDate} — totals incomplete</span>}
           </p>
         </div>
         <div className="kpi" style={{minWidth:160}}>
@@ -145,7 +150,7 @@ function SpendingView({ data, bankData }) {
                       <tr key={i}>
                         <td className="mono" style={{whiteSpace:"nowrap"}}>{tx.date}</td>
                         <td><div className="table__name" style={{maxWidth:300}}>{tx.description}</div></td>
-                        <td style={{textAlign:"right"}} className="mono">{fmtDec(tx.amount)}</td>
+                        <td style={{textAlign:"right"}} className="mono">{fmtDec(Math.abs(Number(tx.amount)))}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -153,7 +158,7 @@ function SpendingView({ data, bankData }) {
               </div>
             ) : (
               <div className="card card--tinted" style={{color:"var(--fg-3)", fontSize:13}}>
-                {bankData ? "No transactions matched this cycle." : "Connect bank to auto-track transactions."}
+                {feedStale ? `Bank data ends ${newestTxnDate}; this week's transactions haven't synced yet.` : bankData ? "No transactions matched this cycle." : "Connect bank to auto-track transactions."}
               </div>
             )}
           </div>

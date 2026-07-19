@@ -68,7 +68,9 @@ function BillsView({ data, bankData }) {
     return allTxns.some(tx => {
       const desc = (tx.description || "").toLowerCase();
       const txAmt = Math.abs(Number(tx.amount));
-      return desc.includes(key) && Math.abs(txAmt - amt) < 2;
+      // Tolerance scales with the bill: mortgage-size payments vary by a few
+      // dollars between statement and draft (e.g. $2,975.82 budgeted, $2,968.98 paid)
+      return desc.includes(key) && Math.abs(txAmt - amt) < Math.max(2, amt * 0.02);
     });
   }
 
@@ -177,7 +179,7 @@ function BillsView({ data, bankData }) {
       <div className="card card--tinted" style={{ marginTop: "var(--card-gap)" }}>
         <div className="card__eyebrow"><span className="card__eyebrow-dot" />Note</div>
         <p className="card__body" style={{ margin: 0 }}>
-          Bills marked <strong>manual</strong> are the ones that slip. Mortgage and HELOC both hit June 1 and are manual. Confirm payment or set up autopay.
+          Bills marked <strong>manual</strong> need a human each month: Mortgage, Citi $850, Car Payment, and Affirm (Oliver).
           Paid status pulls from live bank transactions — green means a matching charge appeared in the last 35 days.
         </p>
       </div>
