@@ -21,11 +21,11 @@
 <body>
 <div class="card">
   <h1>Reconnect the bank feed</h1>
-  <p>This relinks Wells Fargo through Teller. Click the button, sign in to Wells Fargo inside the secure Teller window, and a new access token appears below. Copy it and paste it to Claude, who updates the workspace.</p>
+  <p>This relinks Wells Fargo through Teller. Click the button and sign in to Wells Fargo inside the secure Teller window. That's the whole job; when the green message appears you can close this tab.</p>
   <button id="go">Connect Wells Fargo</button>
   <div class="token-box" id="tokenBox">
-    <p class="ok">Connected. Copy this token and paste it into the Claude session:</p>
-    <textarea id="tokenOut" rows="3" readonly onclick="this.select()"></textarea>
+    <p class="ok">Done. The new connection was sent to the workspace automatically. You can close this tab.</p>
+    <textarea id="tokenOut" rows="3" readonly onclick="this.select()" style="display:none"></textarea>
   </div>
   <p id="status"></p>
 </div>
@@ -47,10 +47,25 @@
       applicationId: APPLICATION_ID,
       environment: "development",
       products: ["transactions", "balance"],
-      onSuccess: (enrollment) => {
+      onSuccess: async (enrollment) => {
         document.getElementById("tokenOut").value = enrollment.accessToken;
-        document.getElementById("tokenBox").style.display = "block";
-        status.textContent = "";
+        try {
+          const r = await fetch("/api/reconnect", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: enrollment.accessToken }),
+          });
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          document.getElementById("tokenBox").style.display = "block";
+          status.textContent = "";
+        } catch (e) {
+          // Fallback: show the token so it can be pasted manually
+          document.getElementById("tokenOut").style.display = "block";
+          document.getElementById("tokenBox").style.display = "block";
+          document.querySelector("#tokenBox .ok").textContent =
+            "Connected, but auto-send failed. Copy this token and paste it to Claude:";
+          status.textContent = "";
+        }
       },
       onExit: () => { status.textContent = "Window closed without finishing. Click the button to try again."; status.className = ""; },
       onFailure: (f) => { status.textContent = "Teller reported a failure: " + JSON.stringify(f); status.className = "err"; },
