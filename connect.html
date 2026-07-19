@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pope Household — Bank Reconnect</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  body { font-family: "Public Sans", system-ui, sans-serif; background: #faf9f6; color: #1a1a2e; display: flex; min-height: 100vh; align-items: center; justify-content: center; margin: 0; }
+  .card { max-width: 480px; padding: 40px; background: #fff; border: 1px solid #e2e0da; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  p { font-size: 14px; line-height: 1.5; color: #444; }
+  button { font-size: 15px; padding: 10px 22px; border-radius: 6px; border: none; background: #1a3a8f; color: #fff; cursor: pointer; }
+  button:hover { background: #14306f; }
+  .token-box { display: none; margin-top: 20px; }
+  .token-box textarea { width: 100%; font-family: monospace; font-size: 13px; padding: 10px; border: 1px solid #cfcdc6; border-radius: 6px; box-sizing: border-box; }
+  .ok { color: #1a7f4e; font-weight: 600; }
+  .err { color: #b3261e; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Reconnect the bank feed</h1>
+  <p>This relinks Wells Fargo through Teller. Click the button, sign in to Wells Fargo inside the secure Teller window, and a new access token appears below. Copy it and paste it to Claude, who updates the workspace.</p>
+  <button id="go">Connect Wells Fargo</button>
+  <div class="token-box" id="tokenBox">
+    <p class="ok">Connected. Copy this token and paste it into the Claude session:</p>
+    <textarea id="tokenOut" rows="3" readonly onclick="this.select()"></textarea>
+  </div>
+  <p id="status"></p>
+</div>
+<script src="https://cdn.teller.io/connect/connect.js"></script>
+<script>
+  // Application ID comes from the Teller dashboard. Passed as ?app=app_xxx
+  // or falls back to the value baked in below once known.
+  const params = new URLSearchParams(location.search);
+  const APPLICATION_ID = params.get("app") || "APP_ID_TBD";
+
+  const status = document.getElementById("status");
+  document.getElementById("go").addEventListener("click", () => {
+    if (APPLICATION_ID === "APP_ID_TBD") {
+      status.className = "err";
+      status.textContent = "No application ID set. Open this page as connect.html?app=app_yourid or ask Claude to bake it in.";
+      return;
+    }
+    const setup = TellerConnect.setup({
+      applicationId: APPLICATION_ID,
+      environment: "development",
+      products: ["transactions", "balance"],
+      onSuccess: (enrollment) => {
+        document.getElementById("tokenOut").value = enrollment.accessToken;
+        document.getElementById("tokenBox").style.display = "block";
+        status.textContent = "";
+      },
+      onExit: () => { status.textContent = "Window closed without finishing. Click the button to try again."; status.className = ""; },
+      onFailure: (f) => { status.textContent = "Teller reported a failure: " + JSON.stringify(f); status.className = "err"; },
+    });
+    setup.open();
+  });
+</script>
+</body>
+</html>
