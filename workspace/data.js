@@ -354,3 +354,22 @@ window.WORKSPACE_DATA = {
     { id: "hopewell",name:"John Hopewell", role: "Lawyer",                        thread: "[TBD]",                                    tags: ["professional"] },
   ],
 };
+
+/* Override the static `today` snapshot with the real clock at load time.
+   The static values above are only a shape reference; without this block the
+   header and countdowns stay frozen at the day the file was last edited. */
+(function () {
+  const now = new Date();
+  const iso = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+  const t = window.WORKSPACE_DATA.today;
+  t.date = iso;
+  t.year = now.getFullYear();
+  t.weekday = now.toLocaleDateString("en-US", { weekday: "long" });
+  t.monthDay = now.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+  t.countdowns = (t.countdowns || [])
+    .map((c) => {
+      const days = Math.ceil((new Date(c.date + "T00:00:00") - now) / 86400000);
+      return { ...c, days };
+    })
+    .filter((c) => c.days >= 0);
+})();
