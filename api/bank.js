@@ -41,6 +41,10 @@ function tellerGet(path, token) {
 
 module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
+  // Edge-cache success responses: repeat loads hit the CDN, not Teller
+  // (Teller dev tier rate-limits bursts — refreshing the page twice was
+  // enough to trigger 429s without this).
+  res.setHeader("Cache-Control", "s-maxage=120, stale-while-revalidate=600");
   if (req.method === "OPTIONS") return res.status(200).end();
 
   const token = process.env.TELLER_TOKEN;

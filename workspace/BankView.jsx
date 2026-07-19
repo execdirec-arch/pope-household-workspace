@@ -49,7 +49,7 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
     if (!bankDataProp) fetchBank();
   }, []);
 
-  async function fetchBank() {
+  async function fetchBank(attempt = 0) {
     setStatus("loading");
     try {
       const res = await fetch("/api/bank");
@@ -60,6 +60,12 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
       if (onBankData) onBankData(json);
       setStatus("ok");
     } catch (e) {
+      // Teller rate-limits bursts and the call chain is slow; one quiet
+      // retry absorbs most transient 404/429/timeout blips.
+      if (attempt < 1) {
+        setTimeout(() => fetchBank(attempt + 1), 3500);
+        return;
+      }
       setError(e.message);
       setStatus("error");
     }
