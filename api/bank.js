@@ -72,6 +72,7 @@ module.exports = async function handler(req, res) {
         ]);
         return {
           id: acct.id,
+          enrollment_id: acct.enrollment_id,
           name: acct.name,
           type: acct.type,
           subtype: acct.subtype,

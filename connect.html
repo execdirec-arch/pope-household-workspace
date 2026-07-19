@@ -37,16 +37,23 @@
   const APPLICATION_ID = params.get("app") || "app_psst1k28v87r7go454000";
 
   const status = document.getElementById("status");
+
+  // Prefer reauthorizing the existing enrollment (fixes stalled feeds without
+  // creating a new one). Falls back to a fresh enrollment if lookup fails.
+  let ENROLLMENT_ID = null;
+  fetch("/api/bank").then(r => r.json()).then(d => {
+    ENROLLMENT_ID = d.accounts && d.accounts[0] && d.accounts[0].enrollment_id || null;
+  }).catch(() => {});
+
   document.getElementById("go").addEventListener("click", () => {
-    if (APPLICATION_ID === "APP_ID_TBD") {
-      status.className = "err";
-      status.textContent = "No application ID set. Open this page as connect.html?app=app_yourid or ask Claude to bake it in.";
-      return;
-    }
-    const setup = TellerConnect.setup({
+    const opts = {
       applicationId: APPLICATION_ID,
       environment: "development",
       products: ["transactions", "balance"],
+    };
+    if (ENROLLMENT_ID && !params.get("fresh")) opts.enrollmentId = ENROLLMENT_ID;
+    const setup = TellerConnect.setup({
+      ...opts,
       onSuccess: async (enrollment) => {
         document.getElementById("tokenOut").value = enrollment.accessToken;
         try {
