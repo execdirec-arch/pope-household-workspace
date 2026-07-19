@@ -4,27 +4,52 @@ function SpendingView({ data, bankData }) {
 
   const spending = data.spending || { categories: [] };
 
-  // Current week: Mon–Sun
-  const today = new Date(); today.setHours(0,0,0,0);
-  const dow = today.getDay(); // 0=Sun
-  const weekStart = new Date(today); weekStart.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
-  const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 7);
-  const daysLeft  = Math.ceil((weekEnd - today) / 86400000);
-
-  // All transactions this week
-  const cycleTxns = [];
+  // Newest bank transaction (drives the default week when the feed lags)
   let newestTxnDate = null;
   if (bankData?.accounts) {
     for (const acct of bankData.accounts) {
       for (const tx of (acct.transactions || [])) {
         if (!newestTxnDate || tx.date > newestTxnDate) newestTxnDate = tx.date;
+      }
+    }
+  }
+
+  // Week window: Mon–Sun, navigable. offset 0 = current week, -1 = last week…
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dow = today.getDay(); // 0=Sun
+  const currentWeekStart = new Date(today); currentWeekStart.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+
+  function weekStartOf(dateStr) {
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    const dw = dt.getDay();
+    dt.setDate(dt.getDate() - (dw === 0 ? 6 : dw - 1));
+    return dt;
+  }
+  // Default: current week, unless the feed's newest data predates it — then
+  // open on the last week that actually has transactions.
+  const autoOffset = (bankData && newestTxnDate && weekStartOf(newestTxnDate) < currentWeekStart)
+    ? Math.round((weekStartOf(newestTxnDate) - currentWeekStart) / (7 * 86400000))
+    : 0;
+  const [weekOffsetState, setWeekOffset] = useState(null);
+  const weekOffset = weekOffsetState === null ? autoOffset : weekOffsetState;
+
+  const weekStart = new Date(currentWeekStart); weekStart.setDate(currentWeekStart.getDate() + weekOffset * 7);
+  const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 7);
+  const daysLeft  = weekOffset === 0 ? Math.ceil((weekEnd - today) / 86400000) : null;
+
+  // All transactions in the viewed week
+  const cycleTxns = [];
+  if (bankData?.accounts) {
+    for (const acct of bankData.accounts) {
+      for (const tx of (acct.transactions || [])) {
         const d = new Date(tx.date); d.setHours(0,0,0,0);
         if (d >= weekStart && d < weekEnd) cycleTxns.push(tx);
       }
     }
   }
-  // Feed is stale if the newest bank transaction predates this week
-  const feedStale = bankData && newestTxnDate && new Date(newestTxnDate) < weekStart;
+  // Feed is stale if the newest bank transaction predates the current week
+  const feedStale = bankData && newestTxnDate && weekStartOf(newestTxnDate) < currentWeekStart;
 
   // Manual discretionary entries
   const [discEntries, setDiscEntries] = useState(() => {
@@ -93,11 +118,16 @@ function SpendingView({ data, bankData }) {
       <div className="view__header">
         <div>
           <h1 className="view__title">Spending.</h1>
-          <p className="view__subtitle">
-            {`Week of ${weekStart.toLocaleDateString("en-US", {month:"short",day:"numeric"})} → ${new Date(weekEnd.getTime()-86400000).toLocaleDateString("en-US", {month:"short",day:"numeric"})}`}
-            {daysLeft != null && ` · ${daysLeft} day${daysLeft !== 1 ? "s" : ""} left`}
-            {!bankData && <span style={{marginLeft:8, color:"var(--fg-3)", fontSize:12}}>· connect bank for auto-tracking</span>}
-            {feedStale && <span style={{marginLeft:8, color:"#f59e0b", fontSize:12}}>· bank data ends {newestTxnDate} — totals incomplete</span>}
+          <p className="view__subtitle" style={{display:"flex", alignItems:"center", gap:8, flexWrap:"wrap"}}>
+            <button className="btn btn--ghost btn--sm" onClick={() => setWeekOffset(weekOffset - 1)}>←</button>
+            <span>
+              {`Week of ${weekStart.toLocaleDateString("en-US", {month:"short",day:"numeric"})} → ${new Date(weekEnd.getTime()-86400000).toLocaleDateString("en-US", {month:"short",day:"numeric"})}`}
+              {daysLeft != null && ` · ${daysLeft} day${daysLeft !== 1 ? "s" : ""} left`}
+            </span>
+            <button className="btn btn--ghost btn--sm" onClick={() => setWeekOffset(Math.min(0, weekOffset + 1))} disabled={weekOffset >= 0}>→</button>
+            {weekOffset < 0 && <span className="pill pill--warn" style={{fontSize:11}}>past week</span>}
+            {!bankData && <span style={{color:"var(--fg-3)", fontSize:12}}>· connect bank for auto-tracking</span>}
+            {feedStale && <span style={{color:"#f59e0b", fontSize:12}}>· bank data ends {newestTxnDate}</span>}
           </p>
         </div>
         <div className="kpi" style={{minWidth:160}}>
