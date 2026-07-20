@@ -2,18 +2,12 @@
 // the workspace has bank data even when the Teller feed is down.
 // GET returns the stored set; POST merges new transactions in (deduped);
 // DELETE clears the store.
-const { put, list, del } = require("@vercel/blob");
+const { readJson, writeJson, deleteByPathname } = require("./_blob.js");
 
 const BLOB_PATH = "bank/manual-transactions.json";
 
 async function readStore() {
-  const { blobs } = await list({ prefix: "bank/" });
-  const blob = blobs.find((b) => b.pathname === BLOB_PATH);
-  if (!blob) return [];
-  // Cache-buster: public blob URLs are CDN-cached and this file gets rewritten
-  const res = await fetch(blob.url + "?v=" + Date.now());
-  if (!res.ok) return [];
-  const data = await res.json().catch(() => null);
+  const data = await readJson(BLOB_PATH);
   return Array.isArray(data && data.transactions) ? data.transactions : [];
 }
 
@@ -65,15 +59,12 @@ module.exports = async function handler(req, res) {
         added.push({ date: t.date, description: t.description, amount: String(t.amount), source: "csv" });
       }
       const all = existing.concat(added).sort((a, b) => (a.date < b.date ? 1 : -1));
-      await put(BLOB_PATH, JSON.stringify({ transactions: all, updatedAt: new Date().toISOString() }),
-        { access: "public", addRandomSuffix: false, allowOverwrite: true });
+      await writeJson(BLOB_PATH, { transactions: all, updatedAt: new Date().toISOString() });
       return res.status(200).json({ ok: true, added: added.length, skippedDuplicates: incoming.length - added.length, total: all.length });
     }
 
     if (req.method === "DELETE") {
-      const { blobs } = await list({ prefix: "bank/" });
-      const blob = blobs.find((b) => b.pathname === BLOB_PATH);
-      if (blob) await del(blob.url);
+      await deleteByPathname(BLOB_PATH);
       return res.status(200).json({ ok: true, cleared: true });
     }
 

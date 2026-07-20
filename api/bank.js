@@ -2,23 +2,14 @@
 // manually imported CSV transactions so the workspace keeps working when
 // the Teller feed is down.
 const https = require("https");
-const { list } = require("@vercel/blob");
+const { readJson } = require("./_blob.js");
 const core = require("../workspace/budget-core.js");
 
 const TELLER_BASE = "https://api.teller.io";
 
 async function readManualTransactions() {
-  try {
-    const { blobs } = await list({ prefix: "bank/" });
-    const blob = blobs.find((b) => b.pathname === "bank/manual-transactions.json");
-    if (!blob) return [];
-    const res = await fetch(blob.url + "?v=" + Date.now());
-    if (!res.ok) return [];
-    const data = await res.json().catch(() => null);
-    return Array.isArray(data && data.transactions) ? data.transactions : [];
-  } catch {
-    return [];
-  }
+  const data = await readJson("bank/manual-transactions.json");
+  return Array.isArray(data && data.transactions) ? data.transactions : [];
 }
 
 function tellerAgent() {

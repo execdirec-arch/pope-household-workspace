@@ -1,7 +1,7 @@
 // Receives the new Teller access token from connect.html and parks it in Blob
 // storage so the operator can pick it up and rotate TELLER_TOKEN. The blob is
 // deleted right after pickup; this endpoint has no read path.
-const { put } = require("@vercel/blob");
+const { writeJson } = require("./_blob.js");
 
 async function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -27,11 +27,7 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: "Missing or malformed token" });
   }
 
-  await put(
-    "reconnect/teller-token.json",
-    JSON.stringify({ token, receivedAt: new Date().toISOString() }),
-    { access: "public", addRandomSuffix: false, allowOverwrite: true }
-  );
+  await writeJson("reconnect/teller-token.json", { token, receivedAt: new Date().toISOString() });
 
   return res.status(200).json({ ok: true });
 };

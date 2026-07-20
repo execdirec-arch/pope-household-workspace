@@ -1,5 +1,5 @@
 // State sync — reads/writes per-user state blob for cross-device persistence
-const { put, list } = require("@vercel/blob");
+const { readJson, writeJson } = require("./_blob.js");
 
 const ALLOWED = ["pope7446@gmail.com", "olivercpope@gmail.com"];
 const SYNC_KEYS = ["phw.milestones", "phw.projectLogs", "phw.disc", "phw.paidCards", "phw.doneIds", "phw.overrides"];
@@ -31,17 +31,12 @@ module.exports = async function handler(req, res) {
   const pathname = emailToPath(email);
 
   if (req.method === "GET") {
-    try {
-      const { blobs } = await list({ prefix: pathname });
-      if (!blobs.length) return res.status(200).json({});
-      const data = await fetch(blobs[0].url).then(r => r.json());
-      // Return only the known sync keys
-      const filtered = {};
-      SYNC_KEYS.forEach(k => { if (data[k] !== undefined) filtered[k] = data[k]; });
-      return res.status(200).json(filtered);
-    } catch (e) {
-      return res.status(200).json({});
-    }
+    const data = await readJson(pathname);
+    if (!data) return res.status(200).json({});
+    // Return only the known sync keys
+    const filtered = {};
+    SYNC_KEYS.forEach(k => { if (data[k] !== undefined) filtered[k] = data[k]; });
+    return res.status(200).json(filtered);
   }
 
   if (req.method === "POST") {
@@ -50,7 +45,7 @@ module.exports = async function handler(req, res) {
     // Only persist known keys
     const filtered = {};
     SYNC_KEYS.forEach(k => { if (state[k] !== undefined) filtered[k] = state[k]; });
-    await put(pathname, JSON.stringify(filtered), { access: "public", addRandomSuffix: false, allowOverwrite: true });
+    await writeJson(pathname, filtered);
     return res.status(200).json({ ok: true });
   }
 
