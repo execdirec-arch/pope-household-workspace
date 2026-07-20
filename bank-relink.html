@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pope Household — Feed Maintenance</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  body { font-family: "Public Sans", system-ui, sans-serif; background: #faf9f6; color: #1a1a2e; display: flex; min-height: 100vh; align-items: center; justify-content: center; margin: 0; }
+  .card { max-width: 480px; padding: 40px; background: #fff; border: 1px solid #e2e0da; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  p { font-size: 14px; line-height: 1.5; color: #444; }
+  button { font-size: 15px; padding: 10px 22px; border-radius: 6px; border: none; background: #1a3a8f; color: #fff; cursor: pointer; }
+  button:hover { background: #14306f; }
+  .token-box { display: none; margin-top: 20px; }
+  .token-box textarea { width: 100%; font-family: monospace; font-size: 13px; padding: 10px; border: 1px solid #cfcdc6; border-radius: 6px; box-sizing: border-box; }
+  .ok { color: #1a7f4e; font-weight: 600; }
+  .err { color: #b3261e; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Relink the data feed</h1>
+  <p>This refreshes the household workspace's Teller connection. Click the button and complete the steps in the Teller window. That's the whole job; when the green message appears you can close this tab.</p>
+  <button id="go">Relink feed</button>
+  <div class="token-box" id="tokenBox">
+    <p class="ok">Done. The new connection was sent to the workspace automatically. You can close this tab.</p>
+    <textarea id="tokenOut" rows="3" readonly onclick="this.select()" style="display:none"></textarea>
+  </div>
+  <p id="status"></p>
+</div>
+<script src="https://cdn.teller.io/connect/connect.js"></script>
+<script>
+  // Application ID comes from the Teller dashboard. Passed as ?app=app_xxx
+  // or falls back to the value baked in below once known.
+  const params = new URLSearchParams(location.search);
+  const APPLICATION_ID = params.get("app") || "app_psst1k28v87r7go454000";
+
+  const status = document.getElementById("status");
+
+  // Prefer reauthorizing the existing enrollment (fixes stalled feeds without
+  // creating a new one). Falls back to a fresh enrollment if lookup fails.
+  let ENROLLMENT_ID = null;
+  fetch("/api/bank").then(r => r.json()).then(d => {
+    ENROLLMENT_ID = d.accounts && d.accounts[0] && d.accounts[0].enrollment_id || null;
+  }).catch(() => {});
+
+  document.getElementById("go").addEventListener("click", () => {
+    const opts = {
+      applicationId: APPLICATION_ID,
+      environment: "development",
+    };
+    if (ENROLLMENT_ID && !params.get("fresh")) opts.enrollmentId = ENROLLMENT_ID;
+    const setup = TellerConnect.setup({
+      ...opts,
+      onSuccess: async (enrollment) => {
+        document.getElementById("tokenOut").value = enrollment.accessToken;
+        try {
+          const r = await fetch("/api/reconnect", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: enrollment.accessToken }),
+          });
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          document.getElementById("tokenBox").style.display = "block";
+          status.textContent = "";
+        } catch (e) {
+          // Fallback: show the token so it can be pasted manually
+          document.getElementById("tokenOut").style.display = "block";
+          document.getElementById("tokenBox").style.display = "block";
+          document.querySelector("#tokenBox .ok").textContent =
+            "Connected, but auto-send failed. Copy this token and paste it to Claude:";
+          status.textContent = "";
+        }
+      },
+      onExit: () => { status.textContent = "Window closed without finishing. Click the button to try again."; status.className = ""; },
+      onFailure: (f) => { status.textContent = "Teller reported a failure: " + JSON.stringify(f); status.className = "err"; },
+    });
+    setup.open();
+  });
+</script>
+</body>
+</html>
