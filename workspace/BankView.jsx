@@ -4,6 +4,8 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
   const [bankData, setBankData] = useState(bankDataProp || null);
   const [status, setStatus] = useState(bankDataProp ? "ok" : "idle");
   const [error, setError] = useState(null);
+  const [importMsg, setImportMsg] = useState(null);
+  const fileInputRef = React.useRef(null);
 
   const bills = data.bills || [];
 
@@ -49,10 +51,32 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
     if (!bankDataProp) fetchBank();
   }, []);
 
-  async function fetchBank(attempt = 0) {
+  // Import a Wells Fargo activity CSV: parse locally, store via the API,
+  // then refetch with a cache-buster (the bank API is edge-cached 2 min).
+  async function importCsv(file) {
+    setImportMsg(null);
+    try {
+      const text = await file.text();
+      const transactions = window.WfCsv.parse(text);
+      const res = await fetch("/api/manual-txns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transactions }),
+      });
+      const j = await res.json();
+      if (!res.ok || j.error) throw new Error(j.error || "HTTP " + res.status);
+      setImportMsg(`Imported ${j.added} transaction${j.added === 1 ? "" : "s"}` +
+        (j.skippedDuplicates ? ` (${j.skippedDuplicates} duplicate${j.skippedDuplicates === 1 ? "" : "s"} skipped)` : ""));
+      fetchBank(0, true);
+    } catch (e) {
+      setImportMsg("Import failed: " + e.message);
+    }
+  }
+
+  async function fetchBank(attempt = 0, bustCache = false) {
     setStatus("loading");
     try {
-      const res = await fetch("/api/bank");
+      const res = await fetch("/api/bank" + (bustCache ? "?v=" + Date.now() : ""));
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       if (json.error) throw new Error(json.error);
@@ -81,7 +105,7 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
     return `${m}/${d}`;
   }
 
-  const checking = bankData?.accounts?.find(a => a.subtype === "checking" || a.type === "depository");
+  const checking = bankData?.accounts?.find(a => !a.manual && (a.subtype === "checking" || a.type === "depository"));
   const checkingBalance = checking?.balance?.available != null
     ? Number(checking.balance.available)
     : checking?.balance?.ledger != null ? Number(checking.balance.ledger) : null;
@@ -102,10 +126,28 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
             )}
           </p>
         </div>
-        <button className="btn btn--ghost" onClick={fetchBank} disabled={status === "loading"}>
-          {status === "loading" ? "Loading…" : "↺ Refresh"}
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv,text/csv"
+            style={{ display: "none" }}
+            onChange={e => { const f = e.target.files[0]; e.target.value = ""; if (f) importCsv(f); }}
+          />
+          <button className="btn btn--ghost" onClick={() => fileInputRef.current && fileInputRef.current.click()}>
+            ⬆ Import WF CSV
+          </button>
+          <button className="btn btn--ghost" onClick={() => fetchBank()} disabled={status === "loading"}>
+            {status === "loading" ? "Loading…" : "↺ Refresh"}
+          </button>
+        </div>
       </div>
+
+      {importMsg && (
+        <div className="card card--tinted" style={{ marginBottom: "var(--section-pad)", fontSize: 13, color: importMsg.startsWith("Import failed") ? "#dc2626" : "var(--fg-2)" }}>
+          {importMsg}{!importMsg.startsWith("Import failed") && " — Spending and Bills now include the imported data."}
+        </div>
+      )}
 
       {/* Status states */}
       {status === "loading" && (
@@ -129,7 +171,7 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
         <>
           {/* Balance cards */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12, marginBottom: "var(--section-pad)" }}>
-            {bankData.accounts.map(acct => {
+            {bankData.accounts.filter(a => !a.manual).map(acct => {
               const avail = acct.balance?.available;
               const ledger = acct.balance?.ledger;
               const display = avail ?? ledger;
@@ -180,7 +222,7 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
             const txns = (acct.transactions || []).slice(0, 40);
             if (!txns.length) return null;
             return (
-              <div key={acct.id} style={{ marginBottom: "var(--section-pad)" }}>
+              <div key={acct.id || acct.name} style={{ marginBottom: "var(--section-pad)" }}>
                 <div className="section-header">
                   <h2 className="section-header__title">{acct.name} — recent transactions</h2>
                   <div className="section-header__meta">{txns.length} shown</div>
@@ -191,11 +233,11 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
                       <tr><th>Date</th><th>Description</th><th>Category</th><th style={{ textAlign: "right" }}>Amount</th></tr>
                     </thead>
                     <tbody>
-                      {txns.map(tx => {
+                      {txns.map((tx, i) => {
                         const amt = Number(tx.amount);
                         const isCredit = amt > 0;
                         return (
-                          <tr key={tx.id}>
+                          <tr key={tx.id || tx.date + "-" + i}>
                             <td><div className="table__meta">{fmtDate(tx.date)}</div></td>
                             <td><div className="table__name" style={{ maxWidth: 280 }}>{tx.description}</div></td>
                             <td><div className="table__meta">{tx.details?.category || tx.type || ""}</div></td>

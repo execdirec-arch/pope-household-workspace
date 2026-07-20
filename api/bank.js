@@ -1,7 +1,25 @@
-// Teller bank integration — mTLS proxy for Wells Fargo data
+// Teller bank integration — mTLS proxy for Wells Fargo data, merged with
+// manually imported CSV transactions so the workspace keeps working when
+// the Teller feed is down.
 const https = require("https");
+const { list } = require("@vercel/blob");
+const core = require("../workspace/budget-core.js");
 
 const TELLER_BASE = "https://api.teller.io";
+
+async function readManualTransactions() {
+  try {
+    const { blobs } = await list({ prefix: "bank/" });
+    const blob = blobs.find((b) => b.pathname === "bank/manual-transactions.json");
+    if (!blob) return [];
+    const res = await fetch(blob.url + "?v=" + Date.now());
+    if (!res.ok) return [];
+    const data = await res.json().catch(() => null);
+    return Array.isArray(data && data.transactions) ? data.transactions : [];
+  } catch {
+    return [];
+  }
+}
 
 function tellerAgent() {
   // Env vars stored as raw PEM strings
@@ -60,13 +78,32 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  const manualTxns = await readManualTransactions();
+
+  // No Teller creds: still serve manual imports rather than nothing
   if (!token || !cert || !key) {
+    if (manualTxns.length > 0) {
+      return res.status(200).json({
+        accounts: core.mergeManualTransactions([], manualTxns),
+        fetchedAt: new Date().toISOString(),
+        tellerError: "Teller credentials not configured",
+      });
+    }
     return res.status(503).json({ error: "Teller credentials not configured", token: !!token, cert: !!cert, key: !!key });
   }
 
   try {
     const { status: aStatus, body: accounts } = await tellerGet("/accounts", token);
-    if (aStatus !== 200) return res.status(aStatus).json({ error: "Teller accounts error", detail: accounts });
+    if (aStatus !== 200) {
+      if (manualTxns.length > 0) {
+        return res.status(200).json({
+          accounts: core.mergeManualTransactions([], manualTxns),
+          fetchedAt: new Date().toISOString(),
+          tellerError: "Teller accounts error (HTTP " + aStatus + ")",
+        });
+      }
+      return res.status(aStatus).json({ error: "Teller accounts error", detail: accounts });
+    }
 
     const enriched = await Promise.all(
       accounts.map(async (acct) => {
@@ -88,8 +125,18 @@ module.exports = async function handler(req, res) {
       })
     );
 
-    return res.status(200).json({ accounts: enriched, fetchedAt: new Date().toISOString() });
+    return res.status(200).json({
+      accounts: core.mergeManualTransactions(enriched, manualTxns),
+      fetchedAt: new Date().toISOString(),
+    });
   } catch (e) {
+    if (manualTxns.length > 0) {
+      return res.status(200).json({
+        accounts: core.mergeManualTransactions([], manualTxns),
+        fetchedAt: new Date().toISOString(),
+        tellerError: e.message,
+      });
+    }
     return res.status(500).json({ error: e.message, stack: e.stack, code: e.code });
   }
 };

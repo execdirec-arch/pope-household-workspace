@@ -174,10 +174,44 @@
     return summary;
   }
 
+  // Fold manually imported transactions (CSV upload) into the account list
+  // as one synthetic account, deduping on date+amount against everything the
+  // feed already has — so a CSV covering an overlap period never double-counts,
+  // and re-uploading the same file is harmless.
+  function mergeManualTransactions(accounts, manualTxns) {
+    if (!manualTxns || manualTxns.length === 0) return accounts || [];
+    // Against the feed: date+amount only (descriptions differ across sources).
+    // Within the manual set: date+amount+description, so re-uploads collapse
+    // but two same-day same-amount purchases both survive.
+    const feedKeys = new Set();
+    for (const acct of accounts || []) {
+      for (const tx of acct.transactions || []) {
+        feedKeys.add(tx.date + "|" + Number(tx.amount).toFixed(2));
+      }
+    }
+    const manualKeys = new Set();
+    const kept = [];
+    for (const tx of manualTxns) {
+      const feedKey = tx.date + "|" + Number(tx.amount).toFixed(2);
+      const fullKey = feedKey + "|" + normalize(tx.description);
+      if (feedKeys.has(feedKey) || manualKeys.has(fullKey)) continue;
+      manualKeys.add(fullKey);
+      kept.push(tx);
+    }
+    if (kept.length === 0) return accounts || [];
+    return (accounts || []).concat([{
+      name: "Manual import (Wells Fargo CSV)",
+      type: "depository",
+      manual: true,
+      transactions: kept,
+    }]);
+  }
+
   return {
     isoDay,
     addDaysISO,
     weekStartISO,
+    mergeManualTransactions,
     normalize,
     matchesKeyword,
     matchesBill,
