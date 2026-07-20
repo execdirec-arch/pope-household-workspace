@@ -2,3 +2,6 @@
 .env.dev
 .env*.local
 node_modules
+
+# Real financial data — never commit
+tests/fixtures/*.csv

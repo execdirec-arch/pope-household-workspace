@@ -3,6 +3,7 @@
 // GET returns the stored set; POST merges new transactions in (deduped);
 // DELETE clears the store.
 const { readJson, writeJson, deleteByPathname } = require("./_blob.js");
+const core = require("../workspace/budget-core.js");
 
 const BLOB_PATH = "bank/manual-transactions.json";
 
@@ -16,10 +17,6 @@ function validTxn(t) {
     /^\d{4}-\d{2}-\d{2}$/.test(t.date || "") &&
     /^-?\d+(\.\d+)?$/.test(String(t.amount || "")) &&
     typeof t.description === "string" && t.description.length > 0 && t.description.length < 500;
-}
-
-function dedupeKey(t) {
-  return t.date + "|" + Number(t.amount).toFixed(2) + "|" + t.description.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 async function readBody(req) {
@@ -50,17 +47,23 @@ module.exports = async function handler(req, res) {
       if (incoming.length > 5000) return res.status(400).json({ error: "Too many transactions in one upload" });
 
       const existing = await readStore();
-      const seen = new Set(existing.map(dedupeKey));
-      const added = [];
-      for (const t of incoming) {
-        const key = dedupeKey(t);
-        if (seen.has(key)) continue;
-        seen.add(key);
-        added.push({ date: t.date, description: t.description, amount: String(t.amount), source: "csv" });
-      }
-      const all = existing.concat(added).sort((a, b) => (a.date < b.date ? 1 : -1));
+      const clean = incoming.map((t) => ({
+        date: t.date,
+        description: t.description,
+        amount: String(t.amount),
+        source: "csv",
+        pending: t.pending === true,
+      }));
+      const all = core.mergeImportBatch(existing, clean);
       await writeJson(BLOB_PATH, { transactions: all, updatedAt: new Date().toISOString() });
-      return res.status(200).json({ ok: true, added: added.length, skippedDuplicates: incoming.length - added.length, total: all.length });
+      const added = all.length - existing.filter((t) => !t.pending).length;
+      return res.status(200).json({
+        ok: true,
+        added,
+        skippedDuplicates: clean.length - added,
+        pending: all.filter((t) => t.pending).length,
+        total: all.length,
+      });
     }
 
     if (req.method === "DELETE") {

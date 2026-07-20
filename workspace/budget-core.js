@@ -174,6 +174,28 @@
     return summary;
   }
 
+  // Fold a freshly imported CSV batch into the stored manual set.
+  // Posted rows accumulate and dedupe. Pending rows are NOT kept across
+  // imports: a pending charge re-posts later at a different amount (tips)
+  // or vanishes entirely, so the newest export is always the authority on
+  // what is currently pending.
+  function mergeImportBatch(existing, incoming) {
+    const kept = (existing || []).filter((t) => !t.pending);
+    const seen = new Set(kept.map((t) => importKey(t)));
+    const out = kept.slice();
+    for (const t of incoming || []) {
+      const key = importKey(t);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(t);
+    }
+    return out.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  }
+
+  function importKey(t) {
+    return t.date + "|" + Number(t.amount).toFixed(2) + "|" + normalize(t.description);
+  }
+
   // Fold manually imported transactions (CSV upload) into the account list
   // as one synthetic account, deduping on date+amount against everything the
   // feed already has — so a CSV covering an overlap period never double-counts,
@@ -212,6 +234,7 @@
     addDaysISO,
     weekStartISO,
     mergeManualTransactions,
+    mergeImportBatch,
     normalize,
     matchesKeyword,
     matchesBill,

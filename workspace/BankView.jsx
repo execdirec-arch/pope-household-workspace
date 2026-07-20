@@ -65,8 +65,9 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
       });
       const j = await res.json();
       if (!res.ok || j.error) throw new Error(j.error || "HTTP " + res.status);
-      setImportMsg(`Imported ${j.added} transaction${j.added === 1 ? "" : "s"}` +
-        (j.skippedDuplicates ? ` (${j.skippedDuplicates} duplicate${j.skippedDuplicates === 1 ? "" : "s"} skipped)` : ""));
+      setImportMsg(`Imported ${j.added} new transaction${j.added === 1 ? "" : "s"} from ${transactions.length} rows` +
+        (j.pending ? ` · ${j.pending} still pending` : "") +
+        ` · ${j.total} stored`);
       fetchBank(0, true);
     } catch (e) {
       setImportMsg("Import failed: " + e.message);
@@ -239,7 +240,16 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
                         return (
                           <tr key={tx.id || tx.date + "-" + i}>
                             <td><div className="table__meta">{fmtDate(tx.date)}</div></td>
-                            <td><div className="table__name" style={{ maxWidth: 280 }}>{tx.description}</div></td>
+                            <td>
+                              <div className="table__name" style={{ maxWidth: 280 }}>
+                                {tx.description}
+                                {tx.pending && (
+                                  <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 700, color: "#b45309", background: "#fef3c7", padding: "1px 5px", borderRadius: 3 }}>
+                                    PENDING
+                                  </span>
+                                )}
+                              </div>
+                            </td>
                             <td><div className="table__meta">{tx.details?.category || tx.type || ""}</div></td>
                             <td style={{ textAlign: "right" }}>
                               <div style={{ fontWeight: 700, color: isCredit ? "#22c55e" : "var(--ink)", fontSize: 13 }}>
