@@ -3,53 +3,44 @@ function SpendingView({ data, bankData }) {
   const { useState, useEffect } = React;
 
   const spending = data.spending || { categories: [] };
+  const BC = window.BudgetCore;
 
   // Newest bank transaction (drives the default week when the feed lags)
-  let newestTxnDate = null;
-  if (bankData?.accounts) {
-    for (const acct of bankData.accounts) {
-      for (const tx of (acct.transactions || [])) {
-        if (!newestTxnDate || tx.date > newestTxnDate) newestTxnDate = tx.date;
-      }
-    }
-  }
+  const newestTxnDate = BC.newestTransactionDate(bankData?.accounts);
 
   // Week window: Mon–Sun, navigable. offset 0 = current week, -1 = last week…
+  // All date math on local-parsed dates; comparisons on ISO strings.
   const today = new Date(); today.setHours(0,0,0,0);
-  const dow = today.getDay(); // 0=Sun
-  const currentWeekStart = new Date(today); currentWeekStart.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+  const currentWeekStartISO = BC.weekStartISO(today);
 
-  function weekStartOf(dateStr) {
-    const [y, m, d] = dateStr.split("-").map(Number);
-    const dt = new Date(y, m - 1, d);
-    const dw = dt.getDay();
-    dt.setDate(dt.getDate() - (dw === 0 ? 6 : dw - 1));
-    return dt;
+  function localDate(iso) {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(y, m - 1, d);
   }
   // Default: current week, unless the feed's newest data predates it — then
   // open on the last week that actually has transactions.
-  const autoOffset = (bankData && newestTxnDate && weekStartOf(newestTxnDate) < currentWeekStart)
-    ? Math.round((weekStartOf(newestTxnDate) - currentWeekStart) / (7 * 86400000))
+  const newestWeekISO = newestTxnDate ? BC.weekStartISO(newestTxnDate) : null;
+  const autoOffset = (bankData && newestWeekISO && newestWeekISO < currentWeekStartISO)
+    ? Math.round((localDate(newestWeekISO) - localDate(currentWeekStartISO)) / (7 * 86400000))
     : 0;
   const [weekOffsetState, setWeekOffset] = useState(null);
   const weekOffset = weekOffsetState === null ? autoOffset : weekOffsetState;
 
-  const weekStart = new Date(currentWeekStart); weekStart.setDate(currentWeekStart.getDate() + weekOffset * 7);
-  const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 7);
+  const isoWeekStart = BC.addDaysISO(currentWeekStartISO, weekOffset * 7);
+  const weekStart = localDate(isoWeekStart);
+  const weekEnd   = localDate(BC.addDaysISO(isoWeekStart, 7));
   const daysLeft  = weekOffset === 0 ? Math.ceil((weekEnd - today) / 86400000) : null;
 
-  // All transactions in the viewed week
-  const cycleTxns = [];
-  if (bankData?.accounts) {
-    for (const acct of bankData.accounts) {
-      for (const tx of (acct.transactions || [])) {
-        const d = new Date(tx.date); d.setHours(0,0,0,0);
-        if (d >= weekStart && d < weekEnd) cycleTxns.push(tx);
-      }
-    }
-  }
+  // Categorize the viewed week: bills/debt/transfers excluded, every
+  // remaining debit lands in exactly one category or "Everything else".
+  const weekSummary = BC.summarizeWeek(bankData?.accounts || [], isoWeekStart, {
+    categories: spending.categories || [],
+    bills: data.bills,
+    debtKeywords: data.debt?.txnKeywords || [],
+  });
+
   // Feed is stale if the newest bank transaction predates the current week
-  const feedStale = bankData && newestTxnDate && weekStartOf(newestTxnDate) < currentWeekStart;
+  const feedStale = bankData && newestWeekISO && newestWeekISO < currentWeekStartISO;
 
   // Manual discretionary entries
   const [discEntries, setDiscEntries] = useState(() => {
@@ -64,11 +55,9 @@ function SpendingView({ data, bankData }) {
     localStorage.setItem("phw.disc", JSON.stringify(discEntries));
   }, [discEntries]);
 
-  // Only keep disc entries from this week
-  const cycleDisc = discEntries.filter(e => {
-    const d = new Date(e.date); d.setHours(0,0,0,0);
-    return d >= weekStart && d < weekEnd;
-  });
+  // Only keep disc entries from this week (ISO string compare, no UTC shift)
+  const isoWeekEnd = BC.addDaysISO(isoWeekStart, 7);
+  const cycleDisc = discEntries.filter(e => e.date >= isoWeekStart && e.date < isoWeekEnd);
   const discTotal = cycleDisc.reduce((s,e) => s + e.amount, 0);
 
   function addDisc() {
@@ -78,7 +67,7 @@ function SpendingView({ data, bankData }) {
       id: Date.now(),
       label: addLabel.trim(),
       amount: amt,
-      date: new Date().toISOString().slice(0,10),
+      date: BC.isoDay(new Date()),
     }]);
     setAddLabel(""); setAddAmt(""); setShowAdd(false);
   }
@@ -96,13 +85,7 @@ function SpendingView({ data, bankData }) {
 
   function getCategorySpend(cat) {
     if (cat.manualOnly) return { total: discTotal, txns: cycleDisc.map(e => ({ description: e.label, amount: e.amount, date: e.date, _manual: true, _id: e.id })) };
-    const keywords = cat.txnKeywords.map(k => k.toLowerCase());
-    const matched = cycleTxns.filter(tx => {
-      const desc = (tx.description || "").toLowerCase();
-      return keywords.some(k => desc.includes(k)) && Number(tx.amount) < 0; // debits are negative in Teller data
-    });
-    const total = matched.reduce((s, tx) => s + Math.abs(Number(tx.amount)), 0);
-    return { total, txns: matched };
+    return weekSummary.byCategory[cat.id] || { total: 0, txns: [] };
   }
 
   const cats = spending.categories || [];
@@ -194,6 +177,35 @@ function SpendingView({ data, bankData }) {
           </div>
         );
       })}
+
+      {/* Everything else — real debits no category claimed. Visible so nothing is invisible. */}
+      {weekSummary.uncategorized.txns.length > 0 && (
+        <div style={{marginBottom:"var(--section-pad)"}}>
+          <div className="section-header">
+            <h2 className="section-header__title">🧾 Everything else</h2>
+            <div className="section-header__meta">
+              {fmt(weekSummary.uncategorized.total)} spent · not in any budget category
+            </div>
+          </div>
+          <div className="card" style={{padding:0}}>
+            <table className="table">
+              <thead><tr><th>Date</th><th>Description</th><th style={{textAlign:"right"}}>Amount</th></tr></thead>
+              <tbody>
+                {weekSummary.uncategorized.txns.map((tx,i) => (
+                  <tr key={i}>
+                    <td className="mono" style={{whiteSpace:"nowrap"}}>{tx.date}</td>
+                    <td><div className="table__name" style={{maxWidth:300}}>{tx.description}</div></td>
+                    <td style={{textAlign:"right"}} className="mono">{fmtDec(Math.abs(Number(tx.amount)))}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{fontSize:11, color:"var(--fg-3)", marginTop:6}}>
+            Bills, debt payments, and transfers are already excluded. If something here recurs, it may deserve a category or a bill entry.
+          </div>
+        </div>
+      )}
 
       {/* Discretionary — manual */}
       {discCat && (() => {

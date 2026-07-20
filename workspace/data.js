@@ -154,7 +154,7 @@ window.WORKSPACE_DATA = {
         label: "Groceries",
         emoji: "🛒",
         budgetPerWeek: 450,    // Real spend for family of 8. Non-negotiable floor.
-        txnKeywords: ["costco", "walmart", "kroger", "whole foods", "instacart", "uber eats", "doordash", "winn dixie", "rouses", "albertson", "aldi", "trader joe"],
+        txnKeywords: ["costco", "walmart", "kroger", "whole foods", "instacart", "uber eats", "doordash", "winn dixie", "rouses", "rouse", "brookshire", "albertson", "aldi", "trader joe"],
         note: "Family of 8. $450/wk is the real floor, not a target to cut. Uber Eats = Costco delivery.",
       },
       {
@@ -162,7 +162,7 @@ window.WORKSPACE_DATA = {
         label: "Gas",
         emoji: "⛽",
         budgetPerWeek: 75,
-        txnKeywords: ["shell", "circle k", "chevron", "exxon", "bp ", "murphy", "speedway", "valero", "racetrac"],
+        txnKeywords: ["shell", "circle k", "chevron", "exxon", "bp", "murphy", "speedway", "valero", "racetrac", "marathon", "buc-ee", "qt", "quiktrip", "sunoco", "citgo", "texaco"],
         note: "Fuel only. Car wash excluded (separate bill).",
       },
       {
@@ -213,6 +213,9 @@ window.WORKSPACE_DATA = {
     startingTotal: 65159,       // Frozen starting point — never update this
     monthlyToDebt: 1500,        // Lauren's estimated monthly contribution to avalanche (update as income clarifies)
     strategy: "Avalanche — highest APR first. Lauren's income → top card each pay period.",
+    // Debit descriptions that are credit card / debt payments. Budget-core
+    // excludes these from spending categories (they're debt service, not spend).
+    txnKeywords: ["citi payment", "chase credit", "american express", "fpb cr", "concora", "credit one", "capital one", "discover", "apple card", "applecard", "first premier", "indigo"],
     cards: [
       { name: "First Premier 8513", last4: "8513", limit: 1600,  balance: 1352,  apr: 36.00, avalancheRank: 1,  note: "First Premier — highest APR, first target" },
       { name: "First Premier 1308", last4: "1308", limit: 1000,  balance: 1096,  apr: 36.00, avalancheRank: 2,  note: "First Premier — tied for #1 APR" },

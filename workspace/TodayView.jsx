@@ -9,34 +9,25 @@ function TodayView({ data, bankData, toggleTodo, doneIds, onSetFocus }) {
   const billsDue = (d.bills || []).filter(b => b.status === "due-soon").length;
   const debtTotal = d.debt ? d.debt.total : 0;
 
-  // Spending chips — current Mon–Sun week
+  // Spending chips — current Mon–Sun week, categorized by BudgetCore
+  // (bill/debt/transfer exclusion, word-boundary keywords, ISO date compare)
   const spendChips = (() => {
     const spending = d.spending;
     if (!spending) return null;
-    const now = new Date(); now.setHours(0,0,0,0);
-    const dow = now.getDay();
-    const weekStart = new Date(now); weekStart.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
-    const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 7);
-    const weekTxns  = [];
-    if (bankData?.accounts) {
-      for (const acct of bankData.accounts) {
-        for (const tx of (acct.transactions || [])) {
-          const d2 = new Date(tx.date); d2.setHours(0,0,0,0);
-          if (d2 >= weekStart && d2 < weekEnd) weekTxns.push(tx);
-        }
-      }
-    }
+    const BC = window.BudgetCore;
+    const weekStart = BC.weekStartISO(new Date());
+    const weekEnd = BC.addDaysISO(weekStart, 7);
+    const summary = BC.summarizeWeek(bankData?.accounts || [], weekStart, {
+      categories: spending.categories,
+      bills: d.bills,
+      debtKeywords: d.debt?.txnKeywords || [],
+    });
     const discRaw = (() => { try { return JSON.parse(localStorage.getItem("phw.disc") || "[]"); } catch { return []; } })();
-    const weekDisc = discRaw.filter(e => { const d2 = new Date(e.date); d2.setHours(0,0,0,0); return d2 >= weekStart && d2 < weekEnd; });
+    const weekDisc = discRaw.filter(e => e.date >= weekStart && e.date < weekEnd);
     return spending.categories.map(cat => {
-      if (cat.manualOnly) {
-        const spent = weekDisc.reduce((s,e) => s + e.amount, 0);
-        return { ...cat, spent, remaining: cat.budgetPerWeek - spent };
-      }
-      const kws = cat.txnKeywords.map(k => k.toLowerCase());
-      const spent = weekTxns
-        .filter(tx => kws.some(k => (tx.description||"").toLowerCase().includes(k)) && Number(tx.amount) < 0) // debits are negative in Teller data
-        .reduce((s,tx) => s + Math.abs(Number(tx.amount)), 0);
+      const spent = cat.manualOnly
+        ? weekDisc.reduce((s,e) => s + e.amount, 0)
+        : (summary.byCategory[cat.id]?.total || 0);
       return { ...cat, spent, remaining: cat.budgetPerWeek - spent };
     });
   })();
@@ -57,7 +48,7 @@ function TodayView({ data, bankData, toggleTodo, doneIds, onSetFocus }) {
       {spendChips && (
         <div style={{display:"flex", flexWrap:"wrap", gap:8, marginBottom:"var(--section-pad)"}}>
           {spendChips.map(cat => {
-            const pct = Math.min(100, (cat.spent / cat.budgetPerCycle) * 100);
+            const pct = Math.min(100, (cat.spent / cat.budgetPerWeek) * 100);
             const over = cat.remaining < 0;
             const warn = !over && pct > 80;
             const color = over ? "#ef4444" : warn ? "#f59e0b" : "#22c55e";

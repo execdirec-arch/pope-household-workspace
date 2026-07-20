@@ -1,0 +1,1805 @@
+{
+  "fetchedAt": "2026-07-20T00:09:41.172Z",
+  "accounts": [
+    {
+      "name": "EVERYDAY CHECKING",
+      "type": "depository",
+      "subtype": "checking",
+      "transactions": [
+        {
+          "date": "2026-07-07",
+          "description": "PURCHASE HUDSONNEWS S DES PLAINES IL CARD6632",
+          "amount": "-24.10",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "HUDSONNEWS S"
+            }
+          }
+        },
+        {
+          "date": "2026-07-07",
+          "description": "PURCHASE STARBUCKS ST WASHINGTON DC CARD6632",
+          "amount": "-15.42",
+          "details": {
+            "category": "bar",
+            "counterparty": {
+              "name": "STARBUCKS"
+            }
+          }
+        },
+        {
+          "date": "2026-07-07",
+          "description": "PURCHASE AT&T MOBILIT DALLAS TX CARD6632",
+          "amount": "-200.22",
+          "details": {
+            "category": "phone",
+            "counterparty": {
+              "name": "AT&T"
+            }
+          }
+        },
+        {
+          "date": "2026-07-07",
+          "description": "PURCHASE METRO WASHINGTON DC CARD6632",
+          "amount": "-2.25",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-07-07",
+          "description": "PURCHASE SQ *BLUE BOT Washington DC DC CARD6632",
+          "amount": "-4.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-07-07",
+          "description": "PURCHASE COSTCO BY IN +18882467822 CA CARD6632",
+          "amount": "-85.95",
+          "details": {
+            "category": "groceries",
+            "counterparty": {
+              "name": "COSTCO"
+            }
+          }
+        },
+        {
+          "date": "2026-07-07",
+          "description": "PURCHASE LYFT *TEMP +18552800278 CA CARD6632",
+          "amount": "-10.99",
+          "details": {
+            "category": "transportation",
+            "counterparty": {
+              "name": "LYFT"
+            }
+          }
+        },
+        {
+          "date": "2026-07-07",
+          "description": "PURCHASE WHATABURGER BATON ROUGE LA CARD3702",
+          "amount": "-12.31",
+          "details": {
+            "category": "dining",
+            "counterparty": {
+              "name": "WHATABURGER"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "SAVE AS YOU GO TRANSFER DEBIT TO XXXXXXXXXXX1328",
+          "amount": "-7.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "AMERICAN EXPRESS ACH PMT 260706 M2624 OLIVER POPE",
+          "amount": "-200.00",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "AMERICAN EXPRESS"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PAYPAL PURCHASE 260704 UBER EATS REBECCA POPE",
+          "amount": "-48.60",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PAYPAL PURCHASE 260705 UBER EATS REBECCA POPE",
+          "amount": "-46.19",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PAYPAL PURCHASE 260705 UBER REBECCA POPE",
+          "amount": "-15.17",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PAYPAL PURCHASE 260705 UBER EATS REBECCA POPE",
+          "amount": "-9.86",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PAYPAL PURCHASE 260704 UBER EATS REBECCA POPE",
+          "amount": "-9.27",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PAYPAL PURCHASE 260704 UBER REBECCA POPE",
+          "amount": "-5.69",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PAYPAL PURCHASE 260705 UBER REBECCA POPE",
+          "amount": "-5.00",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PURCHASE AUTHORIZED ON 07/06 CVS/PHARMACY #01924 ZACHARY LA P000000347018146 CARD 3702",
+          "amount": "-54.20",
+          "details": {
+            "category": "health",
+            "counterparty": {
+              "name": "CVS"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PURCHASE AUTHORIZED ON 07/05 MARATHON 77669 BATON ROUGE LA P000000445474027 CARD 3702",
+          "amount": "-54.17",
+          "details": {
+            "category": "sport",
+            "counterparty": {
+              "name": "MARATHON"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PURCHASE AUTHORIZED ON 07/05 WNC CATHEDRAL CATHEDRAL.ORG DC S386186454108693 CARD 6632",
+          "amount": "-31.87",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "WNC CATHEDRAL CATHEDRAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PURCHASE AUTHORIZED ON 07/04 CVS/PHARMACY #01 01924--2 ZACHARY LA P306185765512176 CARD 3702",
+          "amount": "-16.45",
+          "details": {
+            "category": "health",
+            "counterparty": {
+              "name": "CVS"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PURCHASE AUTHORIZED ON 07/04 ROUSE S #60 ZACHARY LA S356185760474445 CARD 3702",
+          "amount": "-60.32",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "ROUSE S"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PURCHASE AUTHORIZED ON 07/02 RAISING CANES 0060 972-769-3100 LA S586183780286107 CARD 3702",
+          "amount": "-105.93",
+          "details": {
+            "category": "dining",
+            "counterparty": {
+              "name": "RAISING CANE'S"
+            }
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "PURCHASE AUTHORIZED ON 07/02 TRADER JOE S #621 WASHINGTON DC S386183545572420 CARD 6632",
+          "amount": "-28.60",
+          "details": {
+            "category": "shopping",
+            "counterparty": {
+              "name": "TRADER JOE'S"
+            }
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "SAVE AS YOU GO TRANSFER DEBIT TO XXXXXXXXXXX1328",
+          "amount": "-5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "PAYPAL PURCHASE 260703 UBER EATS REBECCA POPE",
+          "amount": "-71.57",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "PAYPAL PURCHASE 260703 UBER EATS REBECCA POPE",
+          "amount": "-9.33",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "AFFIRM.COM PAYME AFFIRM.COM ST-P3V4K5J5K3Y2 REBECCA POPE",
+          "amount": "-70.25",
+          "details": {
+            "category": "loan",
+            "counterparty": {
+              "name": "AFFIRM"
+            }
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "Albert EDI PYMNTS FSM21584846 Rebecca Pope",
+          "amount": "-55.00",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "ALBERT"
+            }
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "PURCHASE AUTHORIZED ON 07/02 METRO WASHINGTON DC S346183566229136 CARD 6632",
+          "amount": "-2.25",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "METRO"
+            }
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "PURCHASE AUTHORIZED ON 07/01 DD *DOORDASH FUEGO DOORDASH.COM CA S306182818192663 CARD 3702",
+          "amount": "-37.21",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "DD DOORDASH"
+            }
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "PURCHASE AUTHORIZED ON 07/01 EWR DAILY - ECOM NEWARK NJ S466182606281105 CARD 6632",
+          "amount": "-23.66",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "EWR DAILY ECOM"
+            }
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "PURCHASE AUTHORIZED ON 07/01 EWR PROOF - ECOM NEWARK NJ S306182510102541 CARD 6632",
+          "amount": "-36.73",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "EWR PROOF ECOM"
+            }
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "PURCHASE AUTHORIZED ON 07/01 WHATABURGER 817 BATON ROUGE LA S346182385313764 CARD 3702",
+          "amount": "-6.95",
+          "details": {
+            "category": "dining",
+            "counterparty": {
+              "name": "WHATABURGER"
+            }
+          }
+        },
+        {
+          "date": "2026-07-02",
+          "description": "SAVE AS YOU GO TRANSFER DEBIT TO XXXXXXXXXXX1328",
+          "amount": "-3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-07-02",
+          "description": "PURCHASE AUTHORIZED ON 07/01 LYFT *AIRPORT 07 LYFT.COM CA S586182716368187 CARD 6632",
+          "amount": "-31.43",
+          "details": {
+            "category": "transportation",
+            "counterparty": {
+              "name": "LYFT"
+            }
+          }
+        },
+        {
+          "date": "2026-07-02",
+          "description": "PURCHASE AUTHORIZED ON 07/01 COSTCO BY INSTACAR INSTACART.COM CA S306182648671864 CARD 6632",
+          "amount": "-197.17",
+          "details": {
+            "category": "groceries",
+            "counterparty": {
+              "name": "COSTCO"
+            }
+          }
+        },
+        {
+          "date": "2026-07-02",
+          "description": "RECURRING PAYMENT AUTHORIZED ON 07/01 MICROSOFT*MICROSOF MICROSOFT.COM WA S586182440239649 CARD 6632",
+          "amount": "-14.05",
+          "details": {
+            "category": "software",
+            "counterparty": {
+              "name": "MICROSOFT"
+            }
+          }
+        },
+        {
+          "date": "2026-07-02",
+          "description": "PURCHASE AUTHORIZED ON 06/30 TST* 602 - CC 'S CO BATON ROUGE LA S466181565568172 CARD 6632",
+          "amount": "-12.71",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "PAYPAL INST XFER 260701 1051386575722 REBECCA POPE",
+          "amount": "-100.00",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "PAYPAL INST XFER 260701 PAPA JOHNS 360 REBECCA POPE",
+          "amount": "-58.16",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "PAYPAL INST XFER 260701 LMJ REHUMAN REBECCA POPE",
+          "amount": "-10.00",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "NEWREZ-SHELLPOIN WEB PMTS 260629 0676536683 POPE OLIVER",
+          "amount": "-2968.98",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "NEWREZ"
+            }
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "NEIGHBORS ECM LOAN PAY 260630 57900994 Oliver Pope",
+          "amount": "-559.80",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "NEIGHBORS ECM"
+            }
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "CHASE CREDIT CRD EPAY 260630 9495931342 REBECCA POPE",
+          "amount": "-550.00",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "CHASE"
+            }
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "CITI PAYMENT PAYMENT 260630 092053371913457 OLIVER C POPE",
+          "amount": "-406.45",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "CITI"
+            }
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "FPB CR CARD INTERNET 063026 WEB344128256 OLIVER POPE",
+          "amount": "-175.00",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "OLIVER POPE"
+            }
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "FPB CR CARD INTERNET 063026 WEB344128209 OLIVER POPE",
+          "amount": "-100.00",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "OLIVER POPE"
+            }
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "Albert EDI PYMNTS FSM21389150 Rebecca Pope",
+          "amount": "-51.00",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "ALBERT"
+            }
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "RECURRING PAYMENT AUTHORIZED ON 06/30 AMAZON ONEMED 855-684-4722 WA S386181516632396 CARD 6632",
+          "amount": "-9.00",
+          "details": {
+            "category": "shopping",
+            "counterparty": {
+              "name": "AMAZON"
+            }
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "description": "SAVE AS YOU GO TRANSFER DEBIT TO XXXXXXXXXXX1328",
+          "amount": "-2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "description": "Albert EDI PYMNTS FSM21262254 Rebecca Pope",
+          "amount": "-6.00",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "ALBERT"
+            }
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "description": "PURCHASE AUTHORIZED ON 06/30 BIG BOSS PERKIN BATON ROUGE LA P000000951264044 CARD 6632",
+          "amount": "-54.42",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "BIG BOSS"
+            }
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "description": "PURCHASE AUTHORIZED ON 06/30 CVS/PHARMACY #01 01924--2 ZACHARY LA P306181587374886 CARD 6632",
+          "amount": "-14.43",
+          "details": {
+            "category": "health",
+            "counterparty": {
+              "name": "CVS"
+            }
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "description": "Instant Pmt from PAYPAL on 06/30 Ref#20260630021000021P1BRJPC02590017017 INSTANT TRANSFER",
+          "amount": "2206.50",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "SAVE AS YOU GO TRANSFER DEBIT TO XXXXXXXXXXX1328",
+          "amount": "-15.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "Dave DaveSubFee 260629 4YI9S070EKFI4SN Rebecca Pope",
+          "amount": "-3.00",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "DAVE DAVESUBFEE"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "CONCORA CREDIT PAYMENT 260626 043000099946078 POPE REBECCA",
+          "amount": "-50.22",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "CONCORA"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PAYPAL PURCHASE 260628 APPLE.COM BILL REBECCA POPE",
+          "amount": "-9.99",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PAYPAL PURCHASE 260627 APPLE.COM BILL REBECCA POPE",
+          "amount": "-7.69",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PAYPAL PURCHASE 260627 SAMSUNGELEC REBECCA POPE",
+          "amount": "-5.34",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "Albert EDI PYMNTS FSM21028315 Rebecca Pope",
+          "amount": "-11.00",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "ALBERT"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/29 CVS/PHARMACY #01924 ZACHARY LA P000000853679465 CARD 6632",
+          "amount": "-35.23",
+          "details": {
+            "category": "health",
+            "counterparty": {
+              "name": "CVS"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/29 CVS/PHARMACY #01924 ZACHARY LA P000000049302224 CARD 6632",
+          "amount": "-43.06",
+          "details": {
+            "category": "health",
+            "counterparty": {
+              "name": "CVS"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "RECURRING PAYMENT AUTHORIZED ON 06/28 SP+AFF * LUCCHESE- 855-423-3729 CA S346179448640652 CARD 3702",
+          "amount": "-152.27",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "AFF LUCCHESE"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "RECURRING PAYMENT AUTHORIZED ON 06/27 KITTYPOOCLUB.COM KITTYPOOCLUB. OH S386179217587029 CARD 6632",
+          "amount": "-61.74",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "KITTYPOOCLUB"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/27 AMAZON RETA* G15YS WWW.AMAZON.CO WA S306179206947640 CARD 3702",
+          "amount": "-15.92",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "AMAZON RETA"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/27 TACO BELL 034631 ZACHARY LA S356179075314006 CARD 3702",
+          "amount": "-26.38",
+          "details": {
+            "category": "dining",
+            "counterparty": {
+              "name": "TACO BELL"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/27 ROUSE S #60 ZACHARY LA P000000947155151 CARD 3702",
+          "amount": "-50.49",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "ROUSE S"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/27 COSTCO BY INSTACAR INSTACART.COM CA S386178740321470 CARD 6632",
+          "amount": "-317.44",
+          "details": {
+            "category": "groceries",
+            "counterparty": {
+              "name": "COSTCO"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/27 AGAVE BLUETEQUILA ZACHARY LA S386178671119288 CARD 3702",
+          "amount": "-133.64",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "AGAVE BLUETEQUILA"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "RECURRING PAYMENT AUTHORIZED ON 06/26 THE FORGE VTT HOST MONTREAL CAN S586178048670459 CARD 3702",
+          "amount": "-10.02",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "THE FORGE"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/26 PAPA JOHNS #3602 225-356-7273 LA S356177852775091 CARD 3702",
+          "amount": "-68.09",
+          "details": {
+            "category": "dining",
+            "counterparty": {
+              "name": "PAPA JOHN'S"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/26 QT 4611 INSIDE CHANNELVIEW TX S306177700977236 CARD 6632",
+          "amount": "-16.61",
+          "details": {
+            "category": "fuel",
+            "counterparty": {
+              "name": "QUIK TRIP"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "RECURRING PAYMENT AUTHORIZED ON 06/26 OPENAI *CHATGPT SU OPENAI.COM CA S306177688465813 CARD 3702",
+          "amount": "-22.30",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "OPENAI"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/26 BUC-EE 'S #0018 WALLER TX S386177654927508 CARD 6632",
+          "amount": "-50.74",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "BUC EE"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/26 BUC-EE 'S #0018 WALLER TX S386177640916915 CARD 6632",
+          "amount": "-29.83",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "BUC EE"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/26 CASH APP*LAUREN*AD cash.app CA S356177619247255 CARD 6632",
+          "amount": "-588.00",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "SQUARE"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/25 FLL AIRP CASAVANA FORT LAUDERDA FL S386176846647198 CARD 6632",
+          "amount": "-53.87",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "FLL"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/25 DD *DOORDASH WALK- DOORDASH.COM CA S306176788907989 CARD 3702",
+          "amount": "-25.62",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "DD DOORDASH WALK"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "PURCHASE AUTHORIZED ON 06/25 JETBLUE 279449 8005382583 NY S386176660879635 CARD 6632",
+          "amount": "-59.00",
+          "details": {
+            "category": "transport",
+            "counterparty": {
+              "name": "JETBLUE"
+            }
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "MONEY TRANSFER AUTHORIZED ON 06/29 FROM Rebecca Pope LA S356180659706461 CARD 6632",
+          "amount": "549.08",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "REBECCA POPE"
+            }
+          }
+        },
+        {
+          "date": "2026-06-26",
+          "description": "SAVE AS YOU GO TRANSFER DEBIT TO XXXXXXXXXXX1328",
+          "amount": "-4.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-26",
+          "description": "PAYPAL PURCHASE 260626 CRUNCHYROLL REBECCA POPE",
+          "amount": "-19.87",
+          "details": {
+            "category": "service",
+            "counterparty": {
+              "name": "PAYPAL"
+            }
+          }
+        },
+        {
+          "date": "2026-06-26",
+          "description": "PURCHASE AUTHORIZED ON 06/26 MURPHY EXPRESS BATON ROUGE LA P000000047303595 CARD 6632",
+          "amount": "-50.50",
+          "details": {
+            "category": "fuel",
+            "counterparty": {
+              "name": "MURPHY EXPRESS"
+            }
+          }
+        },
+        {
+          "date": "2026-06-26",
+          "description": "PURCHASE AUTHORIZED ON 06/26 BROOKSHIRE BROT CAMERON TX P000000154733493 CARD 6632",
+          "amount": "-38.06",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "BROOKSHIRE BROT"
+            }
+          }
+        },
+        {
+          "date": "2026-06-26",
+          "description": "PURCHASE AUTHORIZED ON 06/25 PRICELN*TVL PROTEC 800-774-2354 CT S346176795591479 CARD 6632",
+          "amount": "-18.00",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "PRICELN"
+            }
+          }
+        },
+        {
+          "date": "2026-06-26",
+          "description": "RECURRING PAYMENT AUTHORIZED ON 06/25 CRAFT VIOLINS, LLC 504-2650530 LA S586176321335942 CARD 6632",
+          "amount": "-49.25",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "CRAFT VIOLINS"
+            }
+          }
+        },
+        {
+          "date": "2026-06-26",
+          "description": "PURCHASE AUTHORIZED ON 06/24 DD *DOORDASH MCDON DOORDASH.COM CA S346175815625053 CARD 3702",
+          "amount": "-24.03",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "MCDON"
+            }
+          }
+        },
+        {
+          "date": "2026-06-26",
+          "description": "MASTERYPREP PAYROLL QJYR81J6RNNEAWM OLIVER POPE",
+          "amount": "5782.90",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "QJYR"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "WAY2SAVE® SAVINGS",
+      "type": "depository",
+      "subtype": "savings",
+      "transactions": [
+        {
+          "date": "2026-07-07",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "7.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-07-01",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "15.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "4.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-25",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-24",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "6.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-23",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "22.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-22",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "7.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-18",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-17",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "4.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-16",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "11.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-15",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-12",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-11",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-10",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-09",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-08",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-03",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-02",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "6.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-06-01",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-28",
+          "description": "OVERDRAFT PROTECTION XFER TO CHECKING",
+          "amount": "-22.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-27",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-26",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-22",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-21",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-20",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-19",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "7.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-15",
+          "description": "OVERDRAFT PROTECTION XFER TO CHECKING",
+          "amount": "-18.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-14",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-13",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-12",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "12.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-11",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-07",
+          "description": "ONLINE TRANSFER TO POPE R EVERYDAY CHECKING XXXXXXXXX3224 REF #IB0XZ4DF75 ON 05/07/26",
+          "amount": "-16.00",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "POPE R"
+            }
+          }
+        },
+        {
+          "date": "2026-05-07",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-06",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-05",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-04",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "4.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-05-01",
+          "description": "OVERDRAFT PROTECTION XFER TO CHECKING",
+          "amount": "-44.01",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "description": "INTEREST PAYMENT",
+          "amount": "0.01",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-29",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-28",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "6.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-27",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-24",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "4.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-23",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-22",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-21",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "17.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-17",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-16",
+          "description": "ONLINE TRANSFER TO POPE R EVERYDAY CHECKING XXXXXXXXX3224 REF #IB0XPLF73W ON 04/16/26",
+          "amount": "-29.00",
+          "details": {
+            "category": "general",
+            "counterparty": {
+              "name": "POPE R"
+            }
+          }
+        },
+        {
+          "date": "2026-04-16",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-15",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-14",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "11.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-10",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-09",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-08",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-07",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "7.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-06",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-03",
+          "description": "OVERDRAFT PROTECTION XFER TO CHECKING",
+          "amount": "-42.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-02",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-04-01",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-30",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-27",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-26",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-25",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-24",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "17.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-23",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "7.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-20",
+          "description": "OVERDRAFT PROTECTION XFER TO CHECKING",
+          "amount": "-92.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-19",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "4.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-18",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-17",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "8.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-16",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "4.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-12",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-11",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "4.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-10",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-09",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-06",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-05",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-04",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-03",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "31.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-03-02",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "8.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-02-27",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "3.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-02-26",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "5.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-02-25",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-02-24",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "6.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-02-23",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-02-19",
+          "description": "SAVE AS YOU GO TRANSFER CREDIT FROM XXXXXXXXXXX3224",
+          "amount": "1.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        },
+        {
+          "date": "2026-02-18",
+          "description": "OVERDRAFT PROTECTION XFER TO CHECKING",
+          "amount": "-2.00",
+          "details": {
+            "category": null,
+            "counterparty": null
+          }
+        }
+      ]
+    }
+  ]
+}
