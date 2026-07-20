@@ -65,23 +65,60 @@
     return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
+  // Word-boundary match, tolerant of how WF actually writes merchants:
+  //   - trailing s/'s   BENNYS      matches "benny"
+  //   - dropped &       ATT         matches "at&t"
+  // Both stay anchored at word boundaries, so "rma" still cannot match
+  // inside phaRMAcy and "shell" cannot match NEWREZ-SHELLPOIN.
   function matchesKeyword(description, keyword) {
     const desc = normalize(description);
     const kw = normalize(keyword);
     if (!desc || !kw) return false;
-    return new RegExp("\\b" + escapeRegex(kw) + "\\b").test(desc);
+    // Trailing-s tolerance only for keywords long enough that the plural
+    // can't be a different word: "benny"/"bennys" yes, "bp"/"bps" no.
+    const s = kw.length >= 4 ? "s?" : "";
+    if (new RegExp("\\b" + escapeRegex(kw) + s + "\\b").test(desc)) return true;
+    // Punctuation-free spelling of an &-containing keyword ("at&t" -> "att")
+    if (kw.includes("&")) {
+      const stripped = kw.replace(/&/g, "");
+      if (stripped && new RegExp("\\b" + escapeRegex(stripped) + "s?\\b").test(desc)) return true;
+    }
+    return false;
   }
 
-  // Bills: word-boundary match, plus a collapsed pass so "kitty poo"
-  // catches KITTYPOOCLUB.COM. Collapsed pass is multi-word matchers only:
-  // short single words are substring-dangerous ("rma" hits phaRMAcy).
+  // Multi-word keywords also match WF's collapsed spelling: "circle k" ->
+  // "Circlek", "kitty poo" -> KITTYPOOCLUB.COM. The collapsed form must
+  // still start on a word boundary, so "circle k" cannot match "circle
+  // keeper". Single short words are never collapsed-matched: too dangerous.
+  function matchesKeywordLoose(description, keyword) {
+    if (matchesKeyword(description, keyword)) return true;
+    const kw = normalize(keyword);
+    if (!kw.includes(" ")) return false;
+    const collapsedKw = kw.replace(/ /g, "");
+    const words = normalize(description).split(" ").filter(Boolean);
+    const collapsedDesc = words.join("");
+
+    // The match must start where a word starts, and then either stay inside
+    // that one word (so "kitty poo" catches KITTYPOOCLUB.COM) or end exactly
+    // where a word ends (so "prog paloverde" catches PROG PALOVERDE INS but
+    // "circle k" does not catch "circle keeper").
+    const bounds = [];
+    let pos = 0;
+    for (const word of words) {
+      bounds.push({ start: pos, end: pos + word.length });
+      pos += word.length;
+    }
+    const wordEnds = new Set(bounds.map((b) => b.end));
+    return bounds.some((b) => {
+      if (!collapsedDesc.startsWith(collapsedKw, b.start)) return false;
+      const end = b.start + collapsedKw.length;
+      return end <= b.end || wordEnds.has(end);
+    });
+  }
+
   function matchesBill(description, txnMatch) {
     if (!txnMatch) return false;
-    if (matchesKeyword(description, txnMatch)) return true;
-    const kw = normalize(txnMatch);
-    if (!kw.includes(" ")) return false;
-    const collapsedDesc = normalize(description).replace(/ /g, "");
-    return collapsedDesc.includes(kw.replace(/ /g, ""));
+    return matchesKeywordLoose(description, txnMatch);
   }
 
   function isTransfer(description) {
@@ -109,7 +146,7 @@
     for (const cat of config.categories || []) {
       if (cat.manualOnly) continue;
       for (const kw of cat.txnKeywords || []) {
-        if (matchesKeyword(desc, kw) || (counterparty && matchesKeyword(counterparty, kw))) {
+        if (matchesKeywordLoose(desc, kw) || (counterparty && matchesKeywordLoose(counterparty, kw))) {
           return { kind: "spend", categoryId: cat.id };
         }
       }
