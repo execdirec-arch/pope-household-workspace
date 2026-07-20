@@ -36,12 +36,16 @@
   const params = new URLSearchParams(location.search);
   const APPLICATION_ID = params.get("app") || "app_psst1k28v87r7go454000";
 
+  // Absolute API base so this page also works served from localhost
+  // (content filters reset the hosted copy of this page).
+  const API_BASE = "https://pope-household-workspace.vercel.app";
+
   const status = document.getElementById("status");
 
   // Prefer reauthorizing the existing enrollment (fixes stalled feeds without
   // creating a new one). Falls back to a fresh enrollment if lookup fails.
   let ENROLLMENT_ID = null;
-  fetch("/api/bank").then(r => r.json()).then(d => {
+  fetch(API_BASE + "/api/bank").then(r => r.json()).then(d => {
     ENROLLMENT_ID = d.accounts && d.accounts[0] && d.accounts[0].enrollment_id || null;
   }).catch(() => {});
 
@@ -56,7 +60,7 @@
       onSuccess: async (enrollment) => {
         document.getElementById("tokenOut").value = enrollment.accessToken;
         try {
-          const r = await fetch("/api/reconnect", {
+          const r = await fetch(API_BASE + "/api/reconnect", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ token: enrollment.accessToken }),

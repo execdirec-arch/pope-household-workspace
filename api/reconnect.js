@@ -13,6 +13,12 @@ async function readBody(req) {
 }
 
 module.exports = async function handler(req, res) {
+  // CORS: the relink page runs from localhost because content filters kill
+  // the hosted copy (it pattern-matches as a bank-login page).
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).end();
 
   const body = await readBody(req).catch(() => null);
