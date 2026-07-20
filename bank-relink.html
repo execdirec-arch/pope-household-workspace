@@ -42,21 +42,14 @@
 
   const status = document.getElementById("status");
 
-  // Prefer reauthorizing the existing enrollment (fixes stalled feeds without
-  // creating a new one). Falls back to a fresh enrollment if lookup fails.
-  let ENROLLMENT_ID = null;
-  fetch(API_BASE + "/api/bank").then(r => r.json()).then(d => {
-    ENROLLMENT_ID = d.accounts && d.accounts[0] && d.accounts[0].enrollment_id || null;
-  }).catch(() => {});
-
-  document.getElementById("go").addEventListener("click", () => {
-    const opts = {
+  // Always a fresh enrollment. Repair mode (enrollmentId) is a dead end here:
+  // by the time this page is needed, Teller has usually deleted the old
+  // enrollment, and its widget shows "enrollment could not be found" inside
+  // the iframe without firing onFailure — nothing to catch, nothing to fix.
+  function openConnect() {
+    const setup = TellerConnect.setup({
       applicationId: APPLICATION_ID,
       environment: "development",
-    };
-    if (ENROLLMENT_ID && !params.get("fresh")) opts.enrollmentId = ENROLLMENT_ID;
-    const setup = TellerConnect.setup({
-      ...opts,
       onSuccess: async (enrollment) => {
         document.getElementById("tokenOut").value = enrollment.accessToken;
         try {
@@ -81,7 +74,8 @@
       onFailure: (f) => { status.textContent = "Teller reported a failure: " + JSON.stringify(f); status.className = "err"; },
     });
     setup.open();
-  });
+  }
+  document.getElementById("go").addEventListener("click", openConnect);
 </script>
 </body>
 </html>
