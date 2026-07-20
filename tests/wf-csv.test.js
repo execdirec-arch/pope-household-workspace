@@ -108,23 +108,51 @@ test("parsed transactions categorize through budget-core unchanged", () => {
 
 /* ---------- merging manual imports with the Teller feed ---------- */
 
+const checkingAcct = (txns) => ({
+  id: "acc_1", name: "EVERYDAY CHECKING", type: "depository", subtype: "checking", transactions: txns,
+});
+
+test("imported rows join the checking account's own list, not a separate block", () => {
+  // The feed stops at 07-07; the CSV runs to 07-15. The checking section
+  // must lead with 07-15, otherwise the view still looks stale.
+  const accounts = [
+    checkingAcct([{ date: "2026-07-07", description: "COSTCO", amount: "-85.95" }]),
+    { id: "acc_2", name: "WAY2SAVE SAVINGS", type: "depository", subtype: "savings", transactions: [] },
+  ];
+  const manual = [{ date: "2026-07-15", description: "MARATHON", amount: "-54.17", source: "csv" }];
+
+  const merged = core.mergeManualTransactions(accounts, manual);
+  assert.equal(merged.length, 2, "no synthetic account should be added");
+  const checking = merged.find((a) => a.subtype === "checking");
+  assert.equal(checking.transactions.length, 2);
+  assert.equal(checking.transactions[0].date, "2026-07-15", "newest transaction must be first");
+  assert.equal(merged.find((a) => a.subtype === "savings").transactions.length, 0, "savings must be untouched");
+});
+
+test("merged checking list stays sorted newest first across both sources", () => {
+  const accounts = [checkingAcct([
+    { date: "2026-07-07", description: "FEED B", amount: "-2.00" },
+    { date: "2026-07-01", description: "FEED A", amount: "-1.00" },
+  ])];
+  const manual = [
+    { date: "2026-07-20", description: "CSV NEW", amount: "-4.00", source: "csv" },
+    { date: "2026-07-04", description: "CSV MID", amount: "-3.00", source: "csv" },
+  ];
+  const dates = core.mergeManualTransactions(accounts, manual)[0].transactions.map((t) => t.date);
+  assert.deepEqual(dates, ["2026-07-20", "2026-07-07", "2026-07-04", "2026-07-01"]);
+});
+
 test("mergeManualTransactions dedupes on date+amount against feed data", () => {
-  const accounts = [{
-    name: "EVERYDAY CHECKING",
-    type: "depository",
-    transactions: [
-      { date: "2026-07-07", description: "PURCHASE COSTCO BY IN +18882467822 CA CARD6632", amount: "-85.95" },
-    ],
-  }];
+  const accounts = [checkingAcct([
+    { date: "2026-07-07", description: "PURCHASE COSTCO BY IN +18882467822 CA CARD6632", amount: "-85.95" },
+  ])];
   const manual = [
     { date: "2026-07-07", description: "PURCHASE COSTCO BY IN, +18882467822 CA CARD6632", amount: "-85.95", source: "csv" },
     { date: "2026-07-15", description: "PURCHASE MARATHON 77669", amount: "-54.17", source: "csv" },
   ];
-  const merged = core.mergeManualTransactions(accounts, manual);
-  assert.equal(merged.length, 2);
-  const manualAcct = merged.find((a) => a.manual);
-  assert.equal(manualAcct.transactions.length, 1);
-  assert.equal(manualAcct.transactions[0].date, "2026-07-15");
+  const checking = core.mergeManualTransactions(accounts, manual)[0];
+  assert.equal(checking.transactions.length, 2, "the duplicate Costco row must not appear twice");
+  assert.equal(checking.transactions.filter((t) => t.date === "2026-07-07").length, 1);
 });
 
 test("mergeManualTransactions dedupes within the manual set itself (re-uploads)", () => {
@@ -132,8 +160,8 @@ test("mergeManualTransactions dedupes within the manual set itself (re-uploads)"
     { date: "2026-07-15", description: "PURCHASE MARATHON 77669", amount: "-54.17", source: "csv" },
     { date: "2026-07-15", description: "PURCHASE MARATHON 77669", amount: "-54.17", source: "csv" },
   ];
-  const merged = core.mergeManualTransactions([], manual);
-  assert.equal(merged.find((a) => a.manual).transactions.length, 1);
+  const merged = core.mergeManualTransactions([checkingAcct([])], manual);
+  assert.equal(merged[0].transactions.length, 1);
 });
 
 test("mergeManualTransactions keeps distinct same-day same-amount manual purchases", () => {
@@ -141,8 +169,17 @@ test("mergeManualTransactions keeps distinct same-day same-amount manual purchas
     { date: "2026-07-15", description: "PURCHASE STARBUCKS BATON ROUGE", amount: "-9.99", source: "csv" },
     { date: "2026-07-15", description: "PURCHASE HULU BILL", amount: "-9.99", source: "csv" },
   ];
+  const merged = core.mergeManualTransactions([checkingAcct([])], manual);
+  assert.equal(merged[0].transactions.length, 2);
+});
+
+test("falls back to a synthetic account when there is no checking account", () => {
+  // Teller creds missing entirely: still surface the imported data somewhere
+  const manual = [{ date: "2026-07-15", description: "MARATHON", amount: "-54.17", source: "csv" }];
   const merged = core.mergeManualTransactions([], manual);
-  assert.equal(merged.find((a) => a.manual).transactions.length, 2);
+  assert.equal(merged.length, 1);
+  assert.equal(merged[0].manual, true);
+  assert.equal(merged[0].transactions.length, 1);
 });
 
 test("mergeManualTransactions with no manual txns returns accounts untouched", () => {

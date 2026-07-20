@@ -238,12 +238,14 @@
   // feed already has — so a CSV covering an overlap period never double-counts,
   // and re-uploading the same file is harmless.
   function mergeManualTransactions(accounts, manualTxns) {
-    if (!manualTxns || manualTxns.length === 0) return accounts || [];
+    const list = accounts || [];
+    if (!manualTxns || manualTxns.length === 0) return list;
+
     // Against the feed: date+amount only (descriptions differ across sources).
     // Within the manual set: date+amount+description, so re-uploads collapse
     // but two same-day same-amount purchases both survive.
     const feedKeys = new Set();
-    for (const acct of accounts || []) {
+    for (const acct of list) {
       for (const tx of acct.transactions || []) {
         feedKeys.add(tx.date + "|" + Number(tx.amount).toFixed(2));
       }
@@ -257,13 +259,33 @@
       manualKeys.add(fullKey);
       kept.push(tx);
     }
-    if (kept.length === 0) return accounts || [];
-    return (accounts || []).concat([{
-      name: "Manual import (Wells Fargo CSV)",
-      type: "depository",
-      manual: true,
-      transactions: kept,
-    }]);
+    if (kept.length === 0) return list;
+
+    // The CSV is a checking-account export, so its rows belong IN the
+    // checking account's own list. Appending them as a separate account
+    // leaves that list ending at the feed's last day, which reads as stale
+    // even when the newer data is right there further down the page.
+    const target = list.findIndex((a) => a.subtype === "checking") >= 0
+      ? list.findIndex((a) => a.subtype === "checking")
+      : list.findIndex((a) => a.type === "depository");
+
+    if (target < 0) {
+      return list.concat([{
+        name: "Manual import (Wells Fargo CSV)",
+        type: "depository",
+        manual: true,
+        transactions: sortNewestFirst(kept),
+      }]);
+    }
+
+    return list.map((acct, i) => i !== target ? acct : Object.assign({}, acct, {
+      hasManual: true,
+      transactions: sortNewestFirst((acct.transactions || []).concat(kept)),
+    }));
+  }
+
+  function sortNewestFirst(txns) {
+    return txns.slice().sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
   }
 
   return {

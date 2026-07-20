@@ -226,7 +226,11 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
               <div key={acct.id || acct.name} style={{ marginBottom: "var(--section-pad)" }}>
                 <div className="section-header">
                   <h2 className="section-header__title">{acct.name} — recent transactions</h2>
-                  <div className="section-header__meta">{txns.length} shown</div>
+                  <div className="section-header__meta">
+                    {txns.length} shown
+                    {txns[0]?.date && ` · through ${fmtDate(txns[0].date)}`}
+                    {acct.hasManual && " · feed + CSV import"}
+                  </div>
                 </div>
                 <div className="card" style={{ padding: 0 }}>
                   <table className="table">
@@ -250,7 +254,11 @@ function BankView({ data, bankData: bankDataProp, onBankData }) {
                                 )}
                               </div>
                             </td>
-                            <td><div className="table__meta">{tx.details?.category || tx.type || ""}</div></td>
+                            <td>
+                              <div className="table__meta">
+                                {tx.source === "csv" ? "csv import" : (tx.details?.category || tx.type || "")}
+                              </div>
+                            </td>
                             <td style={{ textAlign: "right" }}>
                               <div style={{ fontWeight: 700, color: isCredit ? "#22c55e" : "var(--ink)", fontSize: 13 }}>
                                 {isCredit ? "+" : ""}{fmt(Math.abs(amt))}
